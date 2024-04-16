@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.city.mapper.CityFacilitiesMapper">
+    
+    <resultMap type="CityFacilities" id="CityFacilitiesResult">
+        <result property="facilityId"    column="facility_id"    />
+        <result property="cityId"    column="city_id"    />
+        <result property="facilityName"    column="facility_name"    />
+        <result property="category"    column="category"    />
+        <result property="address"    column="address"    />
+        <result property="status"    column="status"    />
+        <result property="capacity"    column="capacity"    />
+    </resultMap>
+
+    <resultMap type="CityFacilitiesVO" id="CityFacilitiesResultWithCityName">
+        <result property="facilityId"    column="facility_id"    />
+        <result property="facilityName"    column="facility_name"    />
+        <result property="category"    column="category"    />
+        <result property="address"    column="address"    />
+        <result property="status"    column="status"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="cityName"    column="city_name"    />
+    </resultMap>
+
+    <sql id="selectCityFacilitiesVo">
+        select facility_id, city_id, facility_name, category, address, status, capacity from city_facilities
+    </sql>
+
+
+
+
+    <select id="selectCityFacilitiesList" parameterType="CityFacilities" resultMap="CityFacilitiesResultWithCityName">
+        SELECT cf.facility_id, cf.city_id, cf.facility_name, cf.category, cf.address, cf.status, cf.capacity,
+               c.city_name AS city_name
+        FROM city_facilities cf
+                 JOIN cities c ON cf.city_id = c.city_id
+    </select>
+
+    <!--<select id="selectCityFacilitiesList" parameterType="CityFacilities" resultMap="CityFacilitiesResult">
+        <include refid="selectCityFacilitiesVo"/>
+        <where>  
+            <if test="cityId != null "> and city_id = #{cityId}</if>
+            <if test="facilityName != null  and facilityName != ''"> and facility_name like concat('%', #{facilityName}, '%')</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+        </where>
+    </select>-->
+    
+    <select id="selectCityFacilitiesByFacilityId" parameterType="Long" resultMap="CityFacilitiesResult">
+        <include refid="selectCityFacilitiesVo"/>
+        where facility_id = #{facilityId}
+    </select>
+        
+    <insert id="insertCityFacilities" parameterType="CityFacilities" useGeneratedKeys="true" keyProperty="facilityId">
+        insert into city_facilities
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityId != null">city_id,</if>
+            <if test="facilityName != null and facilityName != ''">facility_name,</if>
+            <if test="category != null and category != ''">category,</if>
+            <if test="address != null">address,</if>
+            <if test="status != null">status,</if>
+            <if test="capacity != null">capacity,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityId != null">#{cityId},</if>
+            <if test="facilityName != null and facilityName != ''">#{facilityName},</if>
+            <if test="category != null and category != ''">#{category},</if>
+            <if test="address != null">#{address},</if>
+            <if test="status != null">#{status},</if>
+            <if test="capacity != null">#{capacity},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCityFacilities" parameterType="CityFacilities">
+        update city_facilities
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityId != null">city_id = #{cityId},</if>
+            <if test="facilityName != null and facilityName != ''">facility_name = #{facilityName},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+        </trim>
+        where facility_id = #{facilityId}
+    </update>
+
+    <delete id="deleteCityFacilitiesByFacilityId" parameterType="Long">
+        delete from city_facilities where facility_id = #{facilityId}
+    </delete>
+
+    <delete id="deleteCityFacilitiesByFacilityIds" parameterType="String">
+        delete from city_facilities where facility_id in 
+        <foreach item="facilityId" collection="array" open="(" separator="," close=")">
+            #{facilityId}
+        </foreach>
+    </delete>
+</mapper>
