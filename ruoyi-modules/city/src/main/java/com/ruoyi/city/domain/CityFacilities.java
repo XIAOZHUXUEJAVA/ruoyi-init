@@ -9,18 +9,18 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
  * 城市设施管理对象 city_facilities
  * 
  * @author ruoyi
- * @date 2024-04-14
+ * @date 2024-04-16
  */
 public class CityFacilities extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 设施ID */
+    /** 设施编号 */
     private Long facilityId;
 
-    /** 所属城市ID */
-    @Excel(name = "所属城市ID")
-    private Long cityId;
+    /** 所属城市 */
+    @Excel(name = "所属城市")
+    private String cityName;
 
     /** 设施名称 */
     @Excel(name = "设施名称")
@@ -28,14 +28,14 @@ public class CityFacilities extends BaseEntity
 
     /** 设施类别 */
     @Excel(name = "设施类别")
-    private String category;
+    private String isPublic;
 
     /** 设施地址 */
     @Excel(name = "设施地址")
     private String address;
 
-    /** 状态: 0表示正常，1表示禁用 */
-    @Excel(name = "状态: 0表示正常，1表示禁用")
+    /** 设施状态 */
+    @Excel(name = "设施状态")
     private String status;
 
     /** 设施容量 */
@@ -51,14 +51,14 @@ public class CityFacilities extends BaseEntity
     {
         return facilityId;
     }
-    public void setCityId(Long cityId) 
+    public void setCityName(String cityName) 
     {
-        this.cityId = cityId;
+        this.cityName = cityName;
     }
 
-    public Long getCityId() 
+    public String getCityName() 
     {
-        return cityId;
+        return cityName;
     }
     public void setFacilityName(String facilityName) 
     {
@@ -69,14 +69,14 @@ public class CityFacilities extends BaseEntity
     {
         return facilityName;
     }
-    public void setCategory(String category) 
+    public void setIsPublic(String isPublic) 
     {
-        this.category = category;
+        this.isPublic = isPublic;
     }
 
-    public String getCategory() 
+    public String getIsPublic() 
     {
-        return category;
+        return isPublic;
     }
     public void setAddress(String address) 
     {
@@ -110,9 +110,9 @@ public class CityFacilities extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("facilityId", getFacilityId())
-            .append("cityId", getCityId())
+            .append("cityName", getCityName())
             .append("facilityName", getFacilityName())
-            .append("category", getCategory())
+            .append("isPublic", getIsPublic())
             .append("address", getAddress())
             .append("status", getStatus())
             .append("capacity", getCapacity())

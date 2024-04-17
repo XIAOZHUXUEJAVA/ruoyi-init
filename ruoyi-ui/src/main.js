@@ -37,7 +37,8 @@ import DictTag from '@/components/DictTag'
 import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
-
+// 导入地图
+import BaiduMap from 'vue-baidu-map';
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -75,7 +76,11 @@ DictData.install()
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
-
+Vue.use(BaiduMap, {
+  ak: 'frNrXEk1s6ZtoMNBGQ4SurdCdSaMuDpS',
+  // ak: 'caev7MtKagTaa2TW8EcTM4TZWxZBynOQ'
+})
+// http://api.map.baidu.com/api?v=2.0&ak=frNrXEk1s6ZtoMNBGQ4SurdCdSaMuDpS
 Vue.config.productionTip = false
 
 new Vue({

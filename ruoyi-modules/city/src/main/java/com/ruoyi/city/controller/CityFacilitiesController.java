@@ -26,7 +26,7 @@ import com.ruoyi.common.core.web.page.TableDataInfo;
  * 城市设施管理Controller
  * 
  * @author ruoyi
- * @date 2024-04-14
+ * @date 2024-04-16
  */
 @RestController
 @RequestMapping("/facilities")

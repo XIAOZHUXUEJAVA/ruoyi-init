@@ -16,10 +16,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="隶属省份|直辖" prop="province">
+      <el-form-item label="隶属省份 | 直辖" prop="province">
         <el-input
           v-model="queryParams.province"
-          placeholder="请输入隶属省份|直辖"
+          placeholder="请输入隶属省份 | 直辖"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -131,9 +131,10 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="城市ID" align="center" prop="cityId" />
-      <el-table-column label="城市名称" align="center" prop="cityName" />
-      <el-table-column label="隶属省份|直辖" align="center" prop="province" />
+      <el-table-column label="城市编号" align="center" prop="cityId" />
+      <el-table-column label="城市名称" align="center" prop="cityName">
+      </el-table-column>
+      <el-table-column label="隶属省份 | 直辖" align="center" prop="province" />
       <el-table-column label="人口数量" align="center" prop="population" />
       <el-table-column
         label="建市日期"
@@ -145,7 +146,18 @@
           <span>{{ parseTime(scope.row.establishedDate, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="经纬度" align="center" prop="location" />
+      <el-table-column label="经纬度" align="center" prop="location">
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            :underline="false"
+            @click="showLocationOnMap(scope.row.location)"
+            style="cursor: pointer"
+          >
+            {{ scope.row.location }}
+          </el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="城市面积" align="center" prop="area" />
       <el-table-column
         label="操作"
@@ -187,8 +199,11 @@
         <el-form-item label="城市名称" prop="cityName">
           <el-input v-model="form.cityName" placeholder="请输入城市名称" />
         </el-form-item>
-        <el-form-item label="隶属省份|直辖" prop="province">
-          <el-input v-model="form.province" placeholder="请输入隶属省份|直辖" />
+        <el-form-item label="隶属省份 | 直辖" prop="province">
+          <el-input
+            v-model="form.province"
+            placeholder="请输入隶属省份 | 直辖"
+          />
         </el-form-item>
         <el-form-item label="人口数量" prop="population">
           <el-input v-model="form.population" placeholder="请输入人口数量" />
@@ -204,7 +219,19 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="经纬度" prop="location">
-          <el-input v-model="form.location" placeholder="请输入经纬度" />
+          <div
+            style="
+              display: grid;
+              grid-template-columns: auto 1fr;
+              align-items: center;
+            "
+          >
+            <el-input v-model="form.location" placeholder="请输入经纬度" />
+            <i
+              class="el-icon-location"
+              @click="updateLocationOnMap(form.location)"
+            ></i>
+          </div>
         </el-form-item>
         <el-form-item label="城市面积" prop="area">
           <el-input v-model="form.area" placeholder="请输入城市面积" />
@@ -214,6 +241,26 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
+    </el-dialog>
+    <el-dialog
+      title="城市位置"
+      :visible.sync="showMap"
+      width="1500px"
+      height="800px"
+    >
+      <MapComponent :center="center" :zoom="zoom"></MapComponent>
+    </el-dialog>
+    <el-dialog
+      title="修改城市位置"
+      :visible.sync="showUpdateMap"
+      width="1500px"
+      height="800px"
+    >
+      <UpdateMap
+        @update-location="handleLocationUpdated"
+        :zoom="12"
+        :center="this.handledLocation"
+      ></UpdateMap>
     </el-dialog>
   </div>
 </template>
@@ -227,10 +274,20 @@ import {
   updateCities,
 } from "@/api/city/cities";
 
+// const MapComponent = () => import("@/components/BaiduMap/MapComponent.vue");
+// import MapComponent from "@/components/BaiduMap/MapComponent.vue";
+import MapComponent from "../../../components/BaiduMap/MapComponent.vue";
+import UpdateMap from "../../../components/BaiduMap/UpdateMap.vue";
+
 export default {
   name: "Cities",
   data() {
     return {
+      handledLocation: {},
+      showUpdateMap: false,
+      center: { lng: 0.0, lat: 0.0 }, // 初始地图中心位置
+      zoom: 12, // 地图展示级别
+      showMap: false, // 控制地图组件的显示状态
       // 遮罩层
       loading: true,
       // 选中数组
@@ -261,7 +318,9 @@ export default {
         area: null,
       },
       // 表单参数
-      form: {},
+      form: {
+        location: "",
+      },
       // 表单校验
       rules: {},
     };
@@ -269,12 +328,37 @@ export default {
   created() {
     this.getList();
   },
+  components: {
+    MapComponent,
+    UpdateMap,
+  },
   methods: {
+    handleLocationUpdated(location) {
+      // 当子组件 UpdateMap 中的 location 发生变化时，更新父组件的 form.location
+      this.form.location = location;
+    },
+    showLocationOnMap(location) {
+      const [lng, lat] = location.split(",").map(parseFloat); // 解析经纬度字符串
+      this.center = { lng, lat }; // 更新地图中心位置
+      this.showMap = true; // 显示地图组件
+    },
+    updateLocationOnMap(location) {
+      this.showUpdateMap = true;
+      // 使用 split 方法将经纬度字符串拆分为数组
+      let locationArray = location.split(",");
+
+      // 将拆分后的数组元素转换为数字，并创建一个包含 lng 和 lat 属性的对象
+      let locationObject = {
+        lng: parseFloat(locationArray[0]),
+        lat: parseFloat(locationArray[1]),
+      };
+      this.handledLocation = locationObject;
+    },
+
     /** 查询城市基础信息列表 */
     getList() {
       this.loading = true;
       listCities(this.queryParams).then((response) => {
-        console.log(response.rows);
         this.citiesList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -377,3 +461,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.el-location-input {
+  color: red;
+  padding-left: 10px;
+}
+</style>

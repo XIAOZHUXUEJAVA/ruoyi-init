@@ -7,7 +7,7 @@ import com.ruoyi.city.domain.CityFacilities;
  * 城市设施管理Service接口
  * 
  * @author ruoyi
- * @date 2024-04-14
+ * @date 2024-04-16
  */
 public interface ICityFacilitiesService 
 {

@@ -11,7 +11,7 @@ import com.ruoyi.city.service.ICityFacilitiesService;
  * 城市设施管理Service业务层处理
  * 
  * @author ruoyi
- * @date 2024-04-14
+ * @date 2024-04-16
  */
 @Service
 public class CityFacilitiesServiceImpl implements ICityFacilitiesService 

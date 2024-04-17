@@ -8,10 +8,10 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="所属城市ID" prop="cityId">
+      <el-form-item label="所属城市" prop="cityName">
         <el-input
-          v-model="queryParams.cityId"
-          placeholder="请输入所属城市ID"
+          v-model="queryParams.cityName"
+          placeholder="请输入所属城市"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -24,9 +24,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="设施类别" prop="category">
+      <el-form-item label="设施类别" prop="isPublic">
         <el-input
-          v-model="queryParams.category"
+          v-model="queryParams.isPublic"
           placeholder="请输入设施类别"
           clearable
           @keyup.enter.native="handleQuery"
@@ -121,28 +121,32 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="设施ID" align="center" prop="facilityId" />
-      <!-- <el-table-column label="所属城市ID" align="center" prop="cityId" /> -->
+      <el-table-column label="设施编号" align="center" prop="facilityId" />
       <el-table-column label="所属城市" align="center" prop="cityName" />
-      <!-- <el-table-column prop="cityId" label="所属城市名称" align="center">
-        <template slot-scope="scope">
-          {{ getCityName(scope.row.cityId) }}
-        </template>
-      </el-table-column> -->
       <el-table-column label="设施名称" align="center" prop="facilityName" />
-      <el-table-column label="设施类别" align="center" prop="category" />
-      <el-table-column label="设施地址" align="center" prop="address" />
-      <!-- <el-table-column label="设备状态" align="center" prop="status" /> -->
-      <el-table-column label="设施状态" align="center" prop="status">
+      <el-table-column label="设施类别" align="center" prop="isPublic" />
+      <!-- <el-table-column label="设施地址" align="center" prop="address" /> -->
+      <el-table-column label="设施地址" align="center" prop="address">
         <!-- <template slot-scope="scope">
-          {{ scope.row.status === "0" ? "可用" : "禁用" }}
+          <span
+            @click="showLocationOnMap(scope.row.address)"
+            style="color: blue"
+            >{{ scope.row.address }}</span
+          >
         </template> -->
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-            {{ scope.row.status === "0" ? "可用" : "禁用" }}
-          </el-tag>
+          <el-link
+            type="primary"
+            :underline="false"
+            @click="showLocationOnMap(scope.row.address)"
+            style="cursor: pointer"
+          >
+            {{ scope.row.address }}
+          </el-link>
         </template>
       </el-table-column>
+
+      <el-table-column label="设施状态" align="center" prop="status" />
       <el-table-column label="设施容量" align="center" prop="capacity" />
       <el-table-column
         label="操作"
@@ -181,32 +185,17 @@
     <!-- 添加或修改城市设施管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="所属城市ID" prop="cityId">
-          <el-input v-model="form.cityId" placeholder="请输入所属城市ID" />
-        </el-form-item>
         <el-form-item label="所属城市" prop="cityName">
-          <el-input v-model="form.cityName" placeholder="请输入所属城市名称" />
+          <el-input v-model="form.cityName" placeholder="请输入所属城市" />
         </el-form-item>
         <el-form-item label="设施名称" prop="facilityName">
           <el-input v-model="form.facilityName" placeholder="请输入设施名称" />
         </el-form-item>
-        <el-form-item label="设施类别" prop="category">
-          <el-input v-model="form.category" placeholder="请输入设施类别" />
+        <el-form-item label="设施类别" prop="isPublic">
+          <el-input v-model="form.isPublic" placeholder="请输入设施类别" />
         </el-form-item>
         <el-form-item label="设施地址" prop="address">
           <el-input v-model="form.address" placeholder="请输入设施地址" />
-        </el-form-item>
-        <!-- <el-form-item label="设施状态" prop="status">
-          <el-input v-model="form.status" placeholder="请输入设施状态" />
-        </el-form-item> -->
-        <el-form-item label="设施状态" prop="status">
-          <el-switch
-            v-model="form.status"
-            active-value="0"
-            inactive-value="1"
-            active-text="可用"
-            inactive-text="禁用"
-          />
         </el-form-item>
         <el-form-item label="设施容量" prop="capacity">
           <el-input v-model="form.capacity" placeholder="请输入设施容量" />
@@ -216,6 +205,14 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
+    </el-dialog>
+    <el-dialog
+      title="地图"
+      :visible.sync="showMap"
+      width="1500px"
+      height="800px"
+    >
+      <AddressMap :zoom="12" :keyword="keyword"></AddressMap>
     </el-dialog>
   </div>
 </template>
@@ -229,13 +226,15 @@ import {
   updateFacilities,
 } from "@/api/city/facilities";
 
-import { getCities } from "@/api/city/cities";
+import AddressMap from "../../../components/BaiduMap/AddressMap.vue";
+
 export default {
   name: "Facilities",
   data() {
     return {
-      //
-      // cityName: "",
+      center: { lng: 0.0, lat: 0.0 },
+      keyword: "",
+      showMap: false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -258,9 +257,9 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        cityId: null,
+        cityName: null,
         facilityName: null,
-        category: null,
+        isPublic: null,
         address: null,
         status: null,
         capacity: null,
@@ -268,48 +267,29 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-        cityId: [
-          { required: true, message: "所属城市ID不能为空", trigger: "blur" },
-        ],
-        facilityName: [
-          { required: true, message: "设施名称不能为空", trigger: "blur" },
-        ],
-        category: [
-          { required: true, message: "设施类别不能为空", trigger: "blur" },
-        ],
-      },
+      rules: {},
     };
   },
   created() {
     this.getList();
   },
+  components: {
+    AddressMap,
+  },
   methods: {
+    showLocationOnMap(address) {
+      console.log(address);
+      this.keyword = address;
+      this.showMap = true;
+    },
     /** 查询城市设施管理列表 */
     getList() {
       this.loading = true;
       listFacilities(this.queryParams).then((response) => {
         this.facilitiesList = response.rows;
-        console.log(this.facilitiesList);
         this.total = response.total;
         this.loading = false;
       });
-    },
-    // getCityName(cityId) {
-    //   const response = getCities(cityId);
-    //   console.log(response);
-    //   return response.data.cityName;
-    // },
-
-    async getCityName(cityId) {
-      try {
-        const response = await getCities(cityId);
-        console.log(response.data.cityName);
-        return response.data.cityName;
-      } catch (error) {
-        console.error("Error fetching city data:", error);
-        return ""; // 如果出现错误，返回空字符串
-      }
     },
     // 取消按钮
     cancel() {
@@ -320,9 +300,9 @@ export default {
     reset() {
       this.form = {
         facilityId: null,
-        cityId: null,
+        cityName: null,
         facilityName: null,
-        category: null,
+        isPublic: null,
         address: null,
         status: null,
         capacity: null,
@@ -357,9 +337,6 @@ export default {
       const facilityId = row.facilityId || this.ids;
       getFacilities(facilityId).then((response) => {
         this.form = response.data;
-        console.log(this.form);
-        // let result = getCities(this.form.cityId);
-        // let cityName = result.data.cityName;
         this.open = true;
         this.title = "修改城市设施管理";
       });

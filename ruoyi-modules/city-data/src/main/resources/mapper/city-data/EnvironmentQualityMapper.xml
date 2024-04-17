@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.citydata.mapper.EnvironmentQualityMapper">
+    
+    <resultMap type="EnvironmentQuality" id="EnvironmentQualityResult">
+        <result property="envId"    column="env_id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="airQuality"    column="air_quality"    />
+        <result property="noiseLevel"    column="noise_level"    />
+        <result property="pollutantEmission"    column="pollutant_emission"    />
+        <result property="recordDate"    column="record_date"    />
+    </resultMap>
+
+    <sql id="selectEnvironmentQualityVo">
+        select env_id, city_name, air_quality, noise_level, pollutant_emission, record_date from environment_quality
+    </sql>
+
+    <select id="selectEnvironmentQualityList" parameterType="EnvironmentQuality" resultMap="EnvironmentQualityResult">
+        <include refid="selectEnvironmentQualityVo"/>
+        <where>  
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="airQuality != null "> and air_quality = #{airQuality}</if>
+            <if test="noiseLevel != null "> and noise_level = #{noiseLevel}</if>
+            <if test="pollutantEmission != null  and pollutantEmission != ''"> and pollutant_emission = #{pollutantEmission}</if>
+            <if test="recordDate != null "> and record_date = #{recordDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectEnvironmentQualityByEnvId" parameterType="Long" resultMap="EnvironmentQualityResult">
+        <include refid="selectEnvironmentQualityVo"/>
+        where env_id = #{envId}
+    </select>
+        
+    <insert id="insertEnvironmentQuality" parameterType="EnvironmentQuality" useGeneratedKeys="true" keyProperty="envId">
+        insert into environment_quality
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">city_name,</if>
+            <if test="airQuality != null">air_quality,</if>
+            <if test="noiseLevel != null">noise_level,</if>
+            <if test="pollutantEmission != null">pollutant_emission,</if>
+            <if test="recordDate != null">record_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">#{cityName},</if>
+            <if test="airQuality != null">#{airQuality},</if>
+            <if test="noiseLevel != null">#{noiseLevel},</if>
+            <if test="pollutantEmission != null">#{pollutantEmission},</if>
+            <if test="recordDate != null">#{recordDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEnvironmentQuality" parameterType="EnvironmentQuality">
+        update environment_quality
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="airQuality != null">air_quality = #{airQuality},</if>
+            <if test="noiseLevel != null">noise_level = #{noiseLevel},</if>
+            <if test="pollutantEmission != null">pollutant_emission = #{pollutantEmission},</if>
+            <if test="recordDate != null">record_date = #{recordDate},</if>
+        </trim>
+        where env_id = #{envId}
+    </update>
+
+    <delete id="deleteEnvironmentQualityByEnvId" parameterType="Long">
+        delete from environment_quality where env_id = #{envId}
+    </delete>
+
+    <delete id="deleteEnvironmentQualityByEnvIds" parameterType="String">
+        delete from environment_quality where env_id in 
+        <foreach item="envId" collection="array" open="(" separator="," close=")">
+            #{envId}
+        </foreach>
+    </delete>
+</mapper>

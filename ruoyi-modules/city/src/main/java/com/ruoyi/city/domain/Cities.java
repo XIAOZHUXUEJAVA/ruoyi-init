@@ -11,21 +11,21 @@ import com.ruoyi.common.core.web.domain.BaseEntity;
  * 城市基础信息对象 cities
  * 
  * @author ruoyi
- * @date 2024-04-13
+ * @date 2024-04-16
  */
 public class Cities extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 城市ID */
+    /** 城市编号 */
     private Long cityId;
 
     /** 城市名称 */
     @Excel(name = "城市名称")
     private String cityName;
 
-    /** 隶属省份|直辖 */
-    @Excel(name = "隶属省份|直辖")
+    /** 隶属省份 | 直辖 */
+    @Excel(name = "隶属省份 | 直辖")
     private String province;
 
     /** 人口数量 */
@@ -37,8 +37,8 @@ public class Cities extends BaseEntity
     @Excel(name = "建市日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date establishedDate;
 
-    /** 经纬度（格式：经度,纬度） */
-    @Excel(name = "经纬度", readConverterExp = "格=式：经度,纬度")
+    /** 经纬度 */
+    @Excel(name = "经纬度")
     private String location;
 
     /** 城市面积 */
