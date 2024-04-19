@@ -124,16 +124,15 @@
       <el-table-column label="设施编号" align="center" prop="facilityId" />
       <el-table-column label="所属城市" align="center" prop="cityName" />
       <el-table-column label="设施名称" align="center" prop="facilityName" />
-      <el-table-column label="设施类别" align="center" prop="isPublic" />
-      <!-- <el-table-column label="设施地址" align="center" prop="address" /> -->
+      <el-table-column label="设施类别" align="center" prop="isPublic">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.isPublic === '0' ? 'success' : 'danger'">
+            {{ scope.row.isPublic === "0" ? "公有" : "私有" }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column label="设施地址" align="center" prop="address">
-        <!-- <template slot-scope="scope">
-          <span
-            @click="showLocationOnMap(scope.row.address)"
-            style="color: blue"
-            >{{ scope.row.address }}</span
-          >
-        </template> -->
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -146,7 +145,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="设施状态" align="center" prop="status" />
+      <el-table-column label="设施状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
+            {{ scope.row.status === "0" ? "正常" : "禁用" }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column label="设施容量" align="center" prop="capacity" />
       <el-table-column
         label="操作"
@@ -192,10 +198,25 @@
           <el-input v-model="form.facilityName" placeholder="请输入设施名称" />
         </el-form-item>
         <el-form-item label="设施类别" prop="isPublic">
-          <el-input v-model="form.isPublic" placeholder="请输入设施类别" />
+          <el-switch
+            v-model="form.isPublic"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="公有"
+            inactive-text="私有"
+          />
         </el-form-item>
         <el-form-item label="设施地址" prop="address">
           <el-input v-model="form.address" placeholder="请输入设施地址" />
+        </el-form-item>
+        <el-form-item label="设施状态" prop="status">
+          <el-switch
+            v-model="form.status"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="正常"
+            inactive-text="禁用"
+          />
         </el-form-item>
         <el-form-item label="设施容量" prop="capacity">
           <el-input v-model="form.capacity" placeholder="请输入设施容量" />
