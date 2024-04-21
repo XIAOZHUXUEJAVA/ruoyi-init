@@ -32,16 +32,60 @@ module.exports = {
     host: '0.0.0.0',
     port: port,
     open: true,
-    proxy: {
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
+proxy: {
+      // 通用代理规则
       [process.env.VUE_APP_BASE_API]: {
         target: `http://localhost:8080`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
+      },
+      // 百度地图 API 的特定代理规则
+      '/road': {
+        target: 'https://api.map.baidu.com',
+        changeOrigin: true,
+        secure: false,     
+        pathRewrite: {
+          '^/road': '/traffic/v1/road'
+        }
+      },
+'/gl': {
+        target: 'https://mapv.baidu.com',
+        changeOrigin: true,
+        secure: false,     
+        pathRewrite: {
+          '^/gl': '/gl/examples'
+        }
       }
+// '/data': {
+//         target: 'https://mapv.baidu.com',
+//         changeOrigin: true,
+//         secure: false,     
+//         pathRewrite: {
+//           '^/data': '/gl/examples/data'
+//         }
+//       }
     },
+
+
+    // proxy: {
+    //   // detail: https://cli.vuejs.org/config/#devserver-proxy
+    //   [process.env.VUE_APP_BASE_API]: {
+    //     target: `http://localhost:8080`,
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       ['^' + process.env.VUE_APP_BASE_API]: ''
+    //     }
+    //   },
+    //   '/road': {
+    //     target: 'https://api.map.baidu.com',
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       '^/road': '/traffic/v1/road' // 将/road替换为/traffic/road
+    //     }
+    //   },
+    // },
     disableHostCheck: true
   },
   css: {

@@ -206,6 +206,24 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            @click="handleGPT(scope.row)"
+            v-hasPermi="['city-data:weather:edit']"
+            >决策</el-button
+          >
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="showWeatherVisual(scope.row)"
+            v-hasPermi="['city-data:weather:edit']"
+            >可视化</el-button
+          >
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="getWeatherApi(scope.row)"
             v-hasPermi="['city-data:weather:edit']"
             >获取实时天气</el-button
@@ -290,6 +308,24 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      :title="title"
+      :visible.sync="showVisual"
+      width="1500px"
+      append-to-body
+    >
+      <weather-component :data="selectedRowData"></weather-component>
+    </el-dialog>
+    <el-dialog
+      :title="title"
+      :visible.sync="showGPT"
+      width="1000px"
+      height="600px"
+      append-to-body
+    >
+      <g-p-t-generate :prompt="selectedPrompt"></g-p-t-generate>
+    </el-dialog>
   </div>
 </template>
 
@@ -302,10 +338,17 @@ import {
   updateWeather,
 } from "@/api/city-data/weather";
 
+import WeatherComponent from "../../../components/Visual/WeatherComponent.vue";
+import GPTGenerate from "../../../components/GPT/GPTGenerate.vue";
+
 export default {
   name: "Weather",
   data() {
     return {
+      selectedPrompt: "",
+      showGPT: false,
+      showVisual: false,
+      selectedRowData: null,
       whetherData: {
         recordId: null,
         city: null,
@@ -362,13 +405,45 @@ export default {
       rules: {},
     };
   },
+  components: {
+    WeatherComponent,
+    GPTGenerate,
+  },
   created() {
     this.getList();
   },
   methods: {
+    handleGPT(row) {
+      this.showGPT = true;
+      this.selectedPrompt =
+        `针对 ${row.city} 的天气情况，根据数据分析，` +
+        `本周 ${row.week} 时间为${row.date}- ${row.updateDate}，` +
+        `气温情况为：白天 ${row.temDay}°C，夜间 ${row.temNight}°C，实况温度为 ${row.tem}°C。` +
+        `风向为 ${row.win}，风速为 ${row.winSpeed}，风速仪表显示为 ${row.winMeter}。` +
+        `气压为 ${row.pressure}hPa，湿度为 ${row.humidity}。` +
+        `请就以上数据，提出以下建议和决策：\n\n` +
+        `1. 城市居民今日出行建议\n` +
+        `2. 是否有灾害发生的风险\n` +
+        `3. 政府需要采取的具体措施`;
+    },
+    showWeatherVisual(row) {
+      this.showVisual = true;
+      this.selectedRowData = row;
+      this.title =
+        row.city +
+        "天气可视化" +
+        " " +
+        row.date +
+        " " +
+        row.updateDate +
+        " " +
+        row.week +
+        " " +
+        row.win +
+        " " +
+        row.winSpeed;
+    },
     async getWeatherApi(row) {
-      const city = row.city;
-
       this.weatherData = {
         recordId: row.recordId,
         city: null,
@@ -384,7 +459,8 @@ export default {
         humidity: null,
         date: null,
       };
-      const apiUrl = `http://v1.yiketianqi.com/free/day?appid=85749543&appsecret=Ys8Nx4wB&unescape=1&city=青岛`;
+      const city = row.city;
+      const apiUrl = `http://v1.yiketianqi.com/free/day?appid=85749543&appsecret=Ys8Nx4wB&unescape=1&city=${city}`;
 
       await fetch(apiUrl)
         .then((response) => response.json())
@@ -404,10 +480,8 @@ export default {
             humidity: data.humidity,
             date: data.date,
           };
-          console.log("传的数据", this.weatherData);
         })
         .catch((error) => console.error("Error fetching weather data:", error));
-      console.log("测试", this.weatherData);
       await updateWeather(this.weatherData).then((response) => {
         this.$modal.msgSuccess("修改成功");
         this.getList();
