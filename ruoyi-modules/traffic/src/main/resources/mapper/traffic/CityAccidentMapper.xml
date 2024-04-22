@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.traffic.mapper.CityAccidentMapper">
+    
+    <resultMap type="CityAccident" id="CityAccidentResult">
+        <result property="accidentId"    column="accident_id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="description"    column="description"    />
+        <result property="accidentAddress"    column="accident_address"    />
+        <result property="status"    column="status"    />
+        <result property="recordDate"    column="record_date"    />
+    </resultMap>
+
+    <sql id="selectCityAccidentVo">
+        select accident_id, city_name, description, accident_address, status, record_date from city_accident
+    </sql>
+
+    <select id="selectCityAccidentList" parameterType="CityAccident" resultMap="CityAccidentResult">
+        <include refid="selectCityAccidentVo"/>
+        <where>  
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="accidentAddress != null  and accidentAddress != ''"> and accident_address = #{accidentAddress}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="recordDate != null "> and record_date = #{recordDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectCityAccidentByAccidentId" parameterType="Long" resultMap="CityAccidentResult">
+        <include refid="selectCityAccidentVo"/>
+        where accident_id = #{accidentId}
+    </select>
+        
+    <insert id="insertCityAccident" parameterType="CityAccident" useGeneratedKeys="true" keyProperty="accidentId">
+        insert into city_accident
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">city_name,</if>
+            <if test="description != null">description,</if>
+            <if test="accidentAddress != null">accident_address,</if>
+            <if test="status != null">status,</if>
+            <if test="recordDate != null">record_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">#{cityName},</if>
+            <if test="description != null">#{description},</if>
+            <if test="accidentAddress != null">#{accidentAddress},</if>
+            <if test="status != null">#{status},</if>
+            <if test="recordDate != null">#{recordDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCityAccident" parameterType="CityAccident">
+        update city_accident
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="accidentAddress != null">accident_address = #{accidentAddress},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="recordDate != null">record_date = #{recordDate},</if>
+        </trim>
+        where accident_id = #{accidentId}
+    </update>
+
+    <delete id="deleteCityAccidentByAccidentId" parameterType="Long">
+        delete from city_accident where accident_id = #{accidentId}
+    </delete>
+
+    <delete id="deleteCityAccidentByAccidentIds" parameterType="String">
+        delete from city_accident where accident_id in 
+        <foreach item="accidentId" collection="array" open="(" separator="," close=")">
+            #{accidentId}
+        </foreach>
+    </delete>
+</mapper>

@@ -32,7 +32,7 @@ export default {
       // 保存 Vue 实例的引用
       var self = this;
 
-      console.log(this.cityName);
+      console.log("测试", this.cityName);
       this.map = new BMapGL.Map(this.$refs.mapContainer);
       this.map.enableScrollWheelZoom(true);
       var myGeo = new BMapGL.Geocoder();

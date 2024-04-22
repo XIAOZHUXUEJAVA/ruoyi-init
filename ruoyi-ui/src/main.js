@@ -77,8 +77,12 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
 })
 Vue.use(BaiduMap, {
+  // ak: 'E4805d16520de693a3fe707cdc962045',
+  // ak: 'nSxiPohfziUaCuONe4ViUP2N',
   ak: 'frNrXEk1s6ZtoMNBGQ4SurdCdSaMuDpS',
   // ak: 'caev7MtKagTaa2TW8EcTM4TZWxZBynOQ'
+  // E4805d16520de693a3fe707cdc962045
+// nSxiPohfziUaCuONe4ViUP2N
 })
 // http://api.map.baidu.com/api?v=2.0&ak=frNrXEk1s6ZtoMNBGQ4SurdCdSaMuDpS
 Vue.config.productionTip = false

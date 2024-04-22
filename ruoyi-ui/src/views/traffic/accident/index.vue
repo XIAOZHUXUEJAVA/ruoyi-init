@@ -8,13 +8,39 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="城市名称" prop="cityName">
+      <el-form-item label="所属城市" prop="cityName">
         <el-input
           v-model="queryParams.cityName"
-          placeholder="请输入城市名称"
+          placeholder="请输入所属城市"
           clearable
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="事故地址" prop="accidentAddress">
+        <el-input
+          v-model="queryParams.accidentAddress"
+          placeholder="请输入事故地址"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-input
+          v-model="queryParams.status"
+          placeholder="请输入状态 "
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="记录日期" prop="recordDate">
+        <el-date-picker
+          clearable
+          v-model="queryParams.recordDate"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择记录日期"
+        >
+        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -38,7 +64,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['traffic:traffic:add']"
+          v-hasPermi="['traffic:accident:add']"
           >新增</el-button
         >
       </el-col>
@@ -50,7 +76,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['traffic:traffic:edit']"
+          v-hasPermi="['traffic:accident:edit']"
           >修改</el-button
         >
       </el-col>
@@ -62,7 +88,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['traffic:traffic:remove']"
+          v-hasPermi="['traffic:accident:remove']"
           >删除</el-button
         >
       </el-col>
@@ -73,7 +99,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['traffic:traffic:export']"
+          v-hasPermi="['traffic:accident:export']"
           >导出</el-button
         >
       </el-col>
@@ -85,13 +111,31 @@
 
     <el-table
       v-loading="loading"
-      :data="trafficList"
+      :data="accidentList"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="路况编号" align="center" prop="cityId" />
-      <el-table-column label="城市名称" align="center" prop="cityName" />
-      <el-table-column label="路况描述" align="center" prop="description" />
+      <el-table-column label="交通事件编号" align="center" prop="accidentId" />
+      <el-table-column label="所属城市" align="center" prop="cityName" />
+      <el-table-column label="事件描述" align="center" prop="description" />
+      <el-table-column label="事故地址" align="center" prop="accidentAddress" />
+      <el-table-column label="状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
+            {{ scope.row.status === "0" ? "已处理" : "未处理" }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="记录日期"
+        align="center"
+        prop="recordDate"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.recordDate, "{y}-{m}-{d}") }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -102,25 +146,16 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="showTrafficMap(scope.row)"
-            v-hasPermi="['traffic:traffic:edit']"
-            >交通实况</el-button
-          >
-
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="showTrafficDetail(scope.row)"
-            v-hasPermi="['traffic:traffic:edit']"
-            >查看详情</el-button
+            @click="handleTrafficAccident(scope.row)"
+            v-hasPermi="['traffic:accident:edit']"
+            >处理</el-button
           >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['traffic:traffic:edit']"
+            v-hasPermi="['traffic:accident:edit']"
             >修改</el-button
           >
           <el-button
@@ -128,7 +163,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['traffic:traffic:remove']"
+            v-hasPermi="['traffic:accident:remove']"
             >删除</el-button
           >
         </template>
@@ -143,18 +178,44 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改路况检测对话框 -->
+    <!-- 添加或修改交通事件对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="城市名称" prop="cityName">
-          <el-input v-model="form.cityName" placeholder="请输入城市名称" />
+        <el-form-item label="所属城市" prop="cityName">
+          <el-input v-model="form.cityName" placeholder="请输入所属城市" />
         </el-form-item>
-        <el-form-item label="路况描述" prop="description">
+        <el-form-item label="事件描述" prop="description">
           <el-input
             v-model="form.description"
             type="textarea"
             placeholder="请输入内容"
           />
+        </el-form-item>
+        <el-form-item label="事故地址" prop="accidentAddress">
+          <el-input
+            v-model="form.accidentAddress"
+            placeholder="请输入事故地址"
+          />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <!-- <el-input v-model="form.status" placeholder="请输入状态" /> -->
+          <el-switch
+            v-model="form.status"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="已处理"
+            inactive-text="未处理"
+          />
+        </el-form-item>
+        <el-form-item label="记录日期" prop="recordDate">
+          <el-date-picker
+            clearable
+            v-model="form.recordDate"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择记录日期"
+          >
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -166,85 +227,48 @@
     <el-dialog
       :title="title"
       :visible.sync="showMap"
-      width="1450px"
-      height="900px"
+      width="1400px"
       append-to-body
     >
-      <traffic-map :cityName="cityName" :key="count"></traffic-map>
-    </el-dialog>
-    <el-dialog
-      :title="trafficTitle"
-      :visible.sync="showDetail"
-      width="60%"
-      height="80%"
-      append-to-body
-    >
-      <div class="dialog-content">
-        <el-input
-          v-model="cityName"
-          :disabled="true"
-          class="input-field"
-          style="padding-bottom: 20px"
-        ></el-input>
-
-        <el-input
-          v-model="roadName"
-          placeholder="请输入道路名称"
-          class="input-field"
-          style="padding-bottom: 20px"
-        ></el-input>
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-search"
-          size="mini"
-          @click="searchRoadDetail"
-          >查询</el-button
-        >
-
-        <div class="result">
-          <p class="result-header">{{ cityName }} {{ roadName }} 道路状况</p>
-
-          <el-input
-            type="textarea"
-            :rows="4"
-            placeholder="道路状况"
-            v-model="trafficDetail.description"
-          >
-          </el-input>
-        </div>
-      </div>
+      <traffic-accident
+        @update-list="updateList"
+        :address="this.address"
+        :count="this.count"
+        :accident="this.updateStatusForm"
+      ></traffic-accident>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import {
-  listTraffic,
-  getTraffic,
-  delTraffic,
-  addTraffic,
-  updateTraffic,
-} from "@/api/traffic/traffic";
-import axios from "axios";
-import TrafficMap from "../../../components/BaiduMap/TrafficMap.vue";
+  listAccident,
+  getAccident,
+  delAccident,
+  addAccident,
+  updateAccident,
+} from "@/api/traffic/accident";
 
+import TrafficAccident from "../../../components/BaiduMap/TrafficAccident.vue";
 export default {
-  name: "Traffic",
+  name: "Accident",
+  components: { TrafficAccident },
   data() {
     return {
-      count: 0,
-      trafficTitle: "道路详情查询",
-      showDetail: false,
-      cityName: "",
-      roadName: "",
-      trafficDetail: {},
-      showMap: false,
-      trafficData: {
-        cityId: null,
+      updateStatusForm: {
+        accidentId: null,
         cityName: null,
         description: null,
+        accidentAddress: null,
+        status: null,
+        recordDate: null,
       },
+      count: 0,
+      address: {
+        lng: null,
+        lat: null,
+      },
+      showMap: false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -257,8 +281,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 路况检测表格数据
-      trafficList: [],
+      // 交通事件表格数据
+      accidentList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -269,6 +293,9 @@ export default {
         pageSize: 10,
         cityName: null,
         description: null,
+        accidentAddress: null,
+        status: null,
+        recordDate: null,
       },
       // 表单参数
       form: {},
@@ -279,72 +306,49 @@ export default {
   created() {
     this.getList();
   },
-  components: { TrafficMap },
   methods: {
-    async searchRoadDetail() {
-      await axios
-        .get(
-          "/road?road_name=" +
-            this.roadName +
-            "&city=" +
-            this.cityName +
-            "&ak=PMRZxriyfTn4x3BnjSTjznbZA2VRiD6J"
-        )
-        .then((response) => {
-          this.trafficDetail = response.data;
-          this.trafficData = {
-            cityId: this.cityId,
-            cityName: this.cityName,
-            description: response.data.description,
-          };
-        })
-        .catch((error) => console.error("Error fetching traffic data:", error));
-      await updateTraffic(this.trafficData).then((response) => {
-        this.$modal.msgSuccess("修改成功");
+    updateList(success) {
+      if (success === "success") {
+        console.log("test");
         this.getList();
-      });
+      }
     },
-    showTrafficDetail(row) {
-      this.showDetail = true;
-      this.cityName = row.cityName;
-      this.cityId = row.cityId;
-    },
-    showTrafficMap(row) {
-      this.cityName = row.cityName;
+    handleTrafficAccident(row) {
+      // console.log(row);
+      this.updateStatusForm = {
+        accidentId: row.accidentId,
+        cityName: row.cityName,
+        description: row.description,
+        accidentAddress: row.accidentAddress,
+        status: row.status,
+        recordDate: row.recordDate,
+      };
+      // console.log(this.updateStatusForm);
       this.count = this.count + 1;
-      this.showMap = true;
+      var myGeo = new BMapGL.Geocoder();
+      // 将地址解析结果显示在地图上，并调整地图视野
+      myGeo.getPoint(
+        row.accidentAddress,
+        (point) => {
+          // 箭头函数保留了'this'上下文
+          if (point) {
+            this.address = {
+              lng: point.lng,
+              lat: point.lat,
+            };
+            this.showMap = true;
+          } else {
+            alert("您选择的地址没有解析到结果！");
+          }
+        },
+        "北京市"
+      );
     },
-    async getTrafficApi(row) {
-      const city = row.cityName;
-
-      //      https://api.map.baidu.com/traffic/v1/road?road_name=东二环&city=北京市&ak=您的AK
-
-      // const apiUrl = `https://api.map.baidu.com/traffic/v1/road?road_name=东二环&city=北京市&ak=PMRZxriyfTn4x3BnjSTjznbZA2VRiD6J`;
-
-      await axios
-        .get(
-          "/road?road_name=经十路&city=" +
-            city +
-            "&ak=PMRZxriyfTn4x3BnjSTjznbZA2VRiD6J"
-        )
-        .then((response) => {
-          this.trafficData = {
-            cityId: row.cityId,
-            cityName: row.cityName,
-            description: response.data.description,
-          };
-        })
-        .catch((error) => console.error("Error fetching traffic data:", error));
-      await updateTraffic(this.trafficData).then((response) => {
-        this.$modal.msgSuccess("修改成功");
-        this.getList();
-      });
-    },
-    /** 查询路况检测列表 */
+    /** 查询交通事件列表 */
     getList() {
       this.loading = true;
-      listTraffic(this.queryParams).then((response) => {
-        this.trafficList = response.rows;
+      listAccident(this.queryParams).then((response) => {
+        this.accidentList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -357,9 +361,12 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        cityId: null,
+        accidentId: null,
         cityName: null,
         description: null,
+        accidentAddress: null,
+        status: null,
+        recordDate: null,
       };
       this.resetForm("form");
     },
@@ -375,7 +382,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.cityId);
+      this.ids = selection.map((item) => item.accidentId);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -383,30 +390,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加路况检测";
+      this.title = "添加交通事件";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const cityId = row.cityId || this.ids;
-      getTraffic(cityId).then((response) => {
+      const accidentId = row.accidentId || this.ids;
+      getAccident(accidentId).then((response) => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改路况检测";
+        this.title = "修改交通事件";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.form.cityId != null) {
-            updateTraffic(this.form).then((response) => {
+          if (this.form.accidentId != null) {
+            updateAccident(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addTraffic(this.form).then((response) => {
+            addAccident(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -417,11 +424,11 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const cityIds = row.cityId || this.ids;
+      const accidentIds = row.accidentId || this.ids;
       this.$modal
-        .confirm('是否确认删除路况检测编号为"' + cityIds + '"的数据项？')
+        .confirm('是否确认删除交通事件编号为"' + accidentIds + '"的数据项？')
         .then(function () {
-          return delTraffic(cityIds);
+          return delAccident(accidentIds);
         })
         .then(() => {
           this.getList();
@@ -432,24 +439,13 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       this.download(
-        "traffic/traffic/export",
+        "traffic/accident/export",
         {
           ...this.queryParams,
         },
-        `traffic_${new Date().getTime()}.xlsx`
+        `accident_${new Date().getTime()}.xlsx`
       );
     },
   },
 };
 </script>
-
-<style scoped>
-.result-header {
-  font-size: 18px; /* 设置字体大小 */
-  font-weight: bold; /* 设置字体粗细 */
-  color: #333; /* 设置字体颜色 */
-  margin-bottom: 10px; /* 设置底部边距 */
-  border-bottom: 2px solid #ccc; /* 设置底部边框 */
-  padding-bottom: 5px; /* 设置底部内边距 */
-}
-</style>
