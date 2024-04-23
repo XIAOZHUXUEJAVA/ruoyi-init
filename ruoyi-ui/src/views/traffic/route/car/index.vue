@@ -1,14 +1,30 @@
 <template>
   <div>
-    <el-input v-model="start" placeholder="请输入起点"></el-input>
+    <!-- <el-input v-model="start" placeholder="请输入起点"></el-input>
     <el-input v-model="end" placeholder="请输入终点"></el-input>
-    <el-button type="primary" @click="search">搜索</el-button>
-    <el-button @click="changePolicy('BMAP_DRIVING_POLICY_LEAST_DISTANCE')"
-      >最短距离</el-button
-    >
-    <el-button @click="changePolicy('BMAP_DRIVING_POLICY_LEAST_TIME')"
-      >最短时间</el-button
-    >
+    <el-button type="primary" @click="search">搜索</el-button> -->
+    <el-form :inline="true" :model="form" ref="form" size="small">
+      <el-form-item label="起点">
+        <el-input v-model="start" placeholder="请输入起点"></el-input>
+      </el-form-item>
+      <el-form-item label="终点">
+        <el-input v-model="end" placeholder="请输入终点"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="search">搜索</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="changePolicy('BMAP_DRIVING_POLICY_LEAST_DISTANCE')"
+          >最短距离</el-button
+        >
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="changePolicy('BMAP_DRIVING_POLICY_LEAST_TIME')"
+          >最短时间</el-button
+        >
+      </el-form-item>
+    </el-form>
+
     <baidu-map>
       <bm-view class="bm-view"></bm-view>
 
@@ -18,7 +34,7 @@
         :end="end"
         :auto-viewport="true"
         :policy="currentPolicy"
-        :panel="false"
+        :panel="true"
       >
       </bm-driving>
     </baidu-map>
@@ -48,7 +64,6 @@ export default {
     async changePolicy(policy) {
       if (this.start && this.end) {
         this.currentPolicy = policy;
-        console.log(this.currentPolicy);
         this.route = true; // 重新搜索路径
       } else {
         // 处理输入不完整的情况

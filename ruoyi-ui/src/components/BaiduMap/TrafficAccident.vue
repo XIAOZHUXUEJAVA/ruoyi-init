@@ -40,7 +40,6 @@ export default {
   },
   created() {
     this.nearby.center = this.address;
-    console.log("ceui", this.accident);
   },
   methods: {
     infohtmlset(e) {

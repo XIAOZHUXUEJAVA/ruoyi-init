@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.city.mapper.CityPlansMapper">
+    
+    <resultMap type="CityPlans" id="CityPlansResult">
+        <result property="planId"    column="plan_id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="planName"    column="plan_name"    />
+        <result property="description"    column="description"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="endDate"    column="end_date"    />
+    </resultMap>
+
+    <sql id="selectCityPlansVo">
+        select plan_id, city_name, plan_name, description, start_date, end_date from city_plans
+    </sql>
+
+    <select id="selectCityPlansList" parameterType="CityPlans" resultMap="CityPlansResult">
+        <include refid="selectCityPlansVo"/>
+        <where>  
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="planName != null  and planName != ''"> and plan_name like concat('%', #{planName}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="startDate != null "> and start_date = #{startDate}</if>
+            <if test="endDate != null "> and end_date = #{endDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectCityPlansByPlanId" parameterType="Long" resultMap="CityPlansResult">
+        <include refid="selectCityPlansVo"/>
+        where plan_id = #{planId}
+    </select>
+        
+    <insert id="insertCityPlans" parameterType="CityPlans" useGeneratedKeys="true" keyProperty="planId">
+        insert into city_plans
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">city_name,</if>
+            <if test="planName != null">plan_name,</if>
+            <if test="description != null">description,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="endDate != null">end_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">#{cityName},</if>
+            <if test="planName != null">#{planName},</if>
+            <if test="description != null">#{description},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCityPlans" parameterType="CityPlans">
+        update city_plans
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="planName != null">plan_name = #{planName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+        </trim>
+        where plan_id = #{planId}
+    </update>
+
+    <delete id="deleteCityPlansByPlanId" parameterType="Long">
+        delete from city_plans where plan_id = #{planId}
+    </delete>
+
+    <delete id="deleteCityPlansByPlanIds" parameterType="String">
+        delete from city_plans where plan_id in 
+        <foreach item="planId" collection="array" open="(" separator="," close=")">
+            #{planId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,8 +1,21 @@
 <template>
   <div>
-    <el-input v-model="start" placeholder="请输入起点"></el-input>
+    <!-- <el-input v-model="start" placeholder="请输入起点"></el-input>
     <el-input v-model="end" placeholder="请输入终点"></el-input>
-    <el-button type="primary" @click="search">搜索</el-button>
+    <el-button type="primary" @click="search">搜索</el-button> -->
+
+    <el-form :inline="true" :model="form" ref="form" size="small">
+      <el-form-item label="起点">
+        <el-input v-model="start" placeholder="请输入起点"></el-input>
+      </el-form-item>
+      <el-form-item label="终点">
+        <el-input v-model="end" placeholder="请输入终点"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="search">搜索</el-button>
+      </el-form-item>
+    </el-form>
+
     <baidu-map>
       <bm-view class="bm-view"></bm-view>
 

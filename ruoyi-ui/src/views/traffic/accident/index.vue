@@ -309,12 +309,10 @@ export default {
   methods: {
     updateList(success) {
       if (success === "success") {
-        console.log("test");
         this.getList();
       }
     },
     handleTrafficAccident(row) {
-      // console.log(row);
       this.updateStatusForm = {
         accidentId: row.accidentId,
         cityName: row.cityName,
@@ -323,7 +321,6 @@ export default {
         status: row.status,
         recordDate: row.recordDate,
       };
-      // console.log(this.updateStatusForm);
       this.count = this.count + 1;
       var myGeo = new BMapGL.Geocoder();
       // 将地址解析结果显示在地图上，并调整地图视野

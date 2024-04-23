@@ -420,7 +420,7 @@ export default {
         `本周 ${row.week} 时间为${row.date}- ${row.updateDate}，` +
         `气温情况为：白天 ${row.temDay}°C，夜间 ${row.temNight}°C，实况温度为 ${row.tem}°C。` +
         `风向为 ${row.win}，风速为 ${row.winSpeed}，风速仪表显示为 ${row.winMeter}。` +
-        `气压为 ${row.pressure}hPa，湿度为 ${row.humidity}。` +
+        `气压为 ${row.pressrue}hPa，湿度为 ${row.humidity}。` +
         `请就以上数据，提出以下建议和决策：\n\n` +
         `1. 城市居民今日出行建议\n` +
         `2. 是否有灾害发生的风险\n` +
@@ -558,7 +558,6 @@ export default {
         if (valid) {
           if (this.form.recordId != null) {
             updateWeather(this.form).then((response) => {
-              console.log("form", this.form);
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();

@@ -57,7 +57,7 @@ proxy: {
         pathRewrite: {
           '^/gl': '/gl/examples'
         }
-      }
+      },
 // '/data': {
 //         target: 'https://mapv.baidu.com',
 //         changeOrigin: true,

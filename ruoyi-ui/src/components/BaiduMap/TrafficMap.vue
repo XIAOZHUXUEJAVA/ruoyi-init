@@ -1,5 +1,10 @@
 <template>
   <div>
+    <div id="trafficLegend">
+      <el-button type="success">畅通</el-button>
+      <el-button type="warning">缓行</el-button>
+      <el-button type="danger">拥堵</el-button>
+    </div>
     <div ref="mapContainer" class="map-container"></div>
     <ul class="btn-wrap" style="z-index: 99">
       <li class="btn" @click="addRouteType">叠加路况</li>
@@ -32,7 +37,6 @@ export default {
       // 保存 Vue 实例的引用
       var self = this;
 
-      console.log("测试", this.cityName);
       this.map = new BMapGL.Map(this.$refs.mapContainer);
       this.map.enableScrollWheelZoom(true);
       var myGeo = new BMapGL.Geocoder();
@@ -56,29 +60,6 @@ export default {
       );
     },
 
-    // initMap() {
-    //   console.log(this.cityName);
-    //   this.map = new BMapGL.Map(this.$refs.mapContainer);
-    //   //   this.map.centerAndZoom(new BMapGL.Point(116.403694, 39.927552), 12);
-    //   this.map.enableScrollWheelZoom(true);
-    //   var myGeo = new BMapGL.Geocoder();
-    //   // 将地址解析结果显示在地图上，并调整地图视野
-    //   myGeo.getPoint(
-    //     this.cityName,
-    //     function (point) {
-    //       if (point) {
-    //         console.log(point);
-    //         this.map.centerAndZoom(point, 12);
-    //         this.map.addOverlay(
-    //           new BMapGL.Marker(point, { title: this.cityName })
-    //         );
-    //       } else {
-    //         alert("您选择的地址没有解析到结果！");
-    //       }
-    //     },
-    //     "北京市"
-    //   );
-    // },
     addRouteType() {
       if (this.map) {
         this.map.setTrafficOn(); // 叠加路况图层

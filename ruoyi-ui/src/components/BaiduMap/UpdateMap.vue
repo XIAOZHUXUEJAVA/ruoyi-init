@@ -87,7 +87,6 @@ export default {
     getBaiduMapPoint() {
       let that = this;
       let myGeo = new this.BMap.Geocoder();
-      console.log(this.searchJingwei);
       myGeo.getPoint(this.searchJingwei, function (point) {
         if (point) {
           console.log(point);

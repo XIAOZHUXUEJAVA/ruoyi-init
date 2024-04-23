@@ -1,15 +1,24 @@
+<!-- <baidu-map
+    class="bm-view"
+    :center="center"
+    :zoom="zoom"
+    :scroll-wheel-zoom="true"
+  ></baidu-map> -->
 <template>
-  <baidu-map>
-    <bm-view class="bm-map"></bm-view>
-    <bm-local-search
-      keyword="交警"
-      :nearby="nearby"
-      :auto-viewport="true"
-      :panel="true"
-      :forceLocal="true"
-      @infohtmlset="infohtmlset"
-    ></bm-local-search>
-    <bm-circle :center="nearby.center" :radius="nearby.radius"></bm-circle>
+  <baidu-map
+    class="bm-map"
+    :center="center"
+    :zoom="zoom"
+    :scroll-wheel-zoom="true"
+  >
+    <bm-map-type
+      :map-types="['BMAP_HYBRID_MAP', 'BMAP_NORMAL_MAP']"
+      anchor="BMAP_ANCHOR_TOP_RIGHT"
+    ></bm-map-type>
+    <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
+    <bm-panorama anchor="BMAP_ANCHOR_BOTTOM_RIGHT"></bm-panorama>
+    <bm-scale anchor="BMAP_ANCHOR_MIDDLE_RIGHT"></bm-scale>
+    <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
   </baidu-map>
 </template>
 
@@ -17,43 +26,17 @@
 export default {
   data() {
     return {
-      nearby: {
-        center: {
-          lng: 117.19003618341229,
-          lat: 36.689304430716895,
-        },
-        radius: 1000,
-      },
+      center: { lng: 116.404, lat: 39.915 }, //经纬度
+      zoom: 5, //地图展示级别
     };
-  },
-  methods: {
-    infohtmlset(e) {
-      const prompt = "是否通知" + e.title + "?";
-      this.$confirm(prompt, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "通知成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消通知",
-          });
-        });
-    },
   },
 };
 </script>
+
 <style scoped>
 .bm-map {
   width: 1330px;
-  height: 650px;
+  height: 690px;
   padding-top: 0px;
   padding-left: 0px;
   padding-bottom: 10px;
