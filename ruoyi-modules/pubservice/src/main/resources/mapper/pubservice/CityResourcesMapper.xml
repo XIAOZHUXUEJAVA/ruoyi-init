@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pubservice.mapper.CityResourcesMapper">
+    
+    <resultMap type="CityResources" id="CityResourcesResult">
+        <result property="resourceId"    column="resource_id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="resourceName"    column="resource_name"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="address"    column="address"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectCityResourcesVo">
+        select resource_id, city_name, resource_name, category_id, address, capacity, status from city_resources
+    </sql>
+
+    <select id="selectCityResourcesList" parameterType="CityResources" resultMap="CityResourcesResult">
+        <include refid="selectCityResourcesVo"/>
+        <where>  
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="resourceName != null  and resourceName != ''"> and resource_name like concat('%', #{resourceName}, '%')</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCityResourcesByResourceId" parameterType="Long" resultMap="CityResourcesResult">
+        <include refid="selectCityResourcesVo"/>
+        where resource_id = #{resourceId}
+    </select>
+        
+    <insert id="insertCityResources" parameterType="CityResources" useGeneratedKeys="true" keyProperty="resourceId">
+        insert into city_resources
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">city_name,</if>
+            <if test="resourceName != null">resource_name,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="address != null">address,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">#{cityName},</if>
+            <if test="resourceName != null">#{resourceName},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="address != null">#{address},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCityResources" parameterType="CityResources">
+        update city_resources
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="resourceName != null">resource_name = #{resourceName},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where resource_id = #{resourceId}
+    </update>
+
+    <delete id="deleteCityResourcesByResourceId" parameterType="Long">
+        delete from city_resources where resource_id = #{resourceId}
+    </delete>
+
+    <delete id="deleteCityResourcesByResourceIds" parameterType="String">
+        delete from city_resources where resource_id in 
+        <foreach item="resourceId" collection="array" open="(" separator="," close=")">
+            #{resourceId}
+        </foreach>
+    </delete>
+</mapper>

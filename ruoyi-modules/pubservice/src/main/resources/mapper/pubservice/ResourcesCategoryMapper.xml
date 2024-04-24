@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pubservice.mapper.ResourcesCategoryMapper">
+    
+    <resultMap type="ResourcesCategory" id="ResourcesCategoryResult">
+        <result property="categoryId"    column="category_id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectResourcesCategoryVo">
+        select category_id, category_name, description from resources_category
+    </sql>
+
+    <select id="selectResourcesCategoryList" parameterType="ResourcesCategory" resultMap="ResourcesCategoryResult">
+        <include refid="selectResourcesCategoryVo"/>
+        <where>  
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectResourcesCategoryByCategoryId" parameterType="Long" resultMap="ResourcesCategoryResult">
+        <include refid="selectResourcesCategoryVo"/>
+        where category_id = #{categoryId}
+    </select>
+        
+    <insert id="insertResourcesCategory" parameterType="ResourcesCategory" useGeneratedKeys="true" keyProperty="categoryId">
+        insert into resources_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">category_name,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">#{categoryName},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResourcesCategory" parameterType="ResourcesCategory">
+        update resources_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteResourcesCategoryByCategoryId" parameterType="Long">
+        delete from resources_category where category_id = #{categoryId}
+    </delete>
+
+    <delete id="deleteResourcesCategoryByCategoryIds" parameterType="String">
+        delete from resources_category where category_id in 
+        <foreach item="categoryId" collection="array" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </delete>
+</mapper>

@@ -16,6 +16,7 @@
         <module>city</module>
         <module>city-data</module>
         <module>traffic</module>
+        <module>pubservice</module>
     </modules>
 
     <artifactId>ruoyi-modules</artifactId>
