@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pubservice.mapper.ServiceQualityMapper">
+    
+    <resultMap type="ServiceQuality" id="ServiceQualityResult">
+        <result property="serviceId"    column="service_id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="serviceName"    column="service_name"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="description"    column="description"    />
+        <result property="quality"    column="quality"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectServiceQualityVo">
+        select service_id, city_name, service_name, category_id, description, quality, status from service_quality
+    </sql>
+
+    <select id="selectServiceQualityList" parameterType="ServiceQuality" resultMap="ServiceQualityResult">
+        <include refid="selectServiceQualityVo"/>
+        <where>  
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="serviceName != null  and serviceName != ''"> and service_name like concat('%', #{serviceName}, '%')</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="quality != null  and quality != ''"> and quality = #{quality}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectServiceQualityByServiceId" parameterType="Long" resultMap="ServiceQualityResult">
+        <include refid="selectServiceQualityVo"/>
+        where service_id = #{serviceId}
+    </select>
+        
+    <insert id="insertServiceQuality" parameterType="ServiceQuality" useGeneratedKeys="true" keyProperty="serviceId">
+        insert into service_quality
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">city_name,</if>
+            <if test="serviceName != null">service_name,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="description != null">description,</if>
+            <if test="quality != null">quality,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">#{cityName},</if>
+            <if test="serviceName != null">#{serviceName},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="description != null">#{description},</if>
+            <if test="quality != null">#{quality},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateServiceQuality" parameterType="ServiceQuality">
+        update service_quality
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="serviceName != null">service_name = #{serviceName},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="quality != null">quality = #{quality},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where service_id = #{serviceId}
+    </update>
+
+    <delete id="deleteServiceQualityByServiceId" parameterType="Long">
+        delete from service_quality where service_id = #{serviceId}
+    </delete>
+
+    <delete id="deleteServiceQualityByServiceIds" parameterType="String">
+        delete from service_quality where service_id in 
+        <foreach item="serviceId" collection="array" open="(" separator="," close=")">
+            #{serviceId}
+        </foreach>
+    </delete>
+</mapper>

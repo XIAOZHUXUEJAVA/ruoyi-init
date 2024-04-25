@@ -16,49 +16,34 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="资源名称" prop="resourceName">
+      <el-form-item label="服务名称" prop="serviceName">
         <el-input
-          v-model="queryParams.resourceName"
-          placeholder="请输入资源名称"
+          v-model="queryParams.serviceName"
+          placeholder="请输入服务名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="资源类型" prop="categoryId">
+      <el-form-item label="服务类别" prop="categoryId">
         <!-- <el-input
           v-model="queryParams.categoryId"
-          placeholder="请输入资源类型"
+          placeholder="请输入服务类别"
           clearable
           @keyup.enter.native="handleQuery"
         /> -->
+
         <el-select
           v-model="queryParams.categoryId"
           placeholder="请选择资源类型"
           @keyup.enter.native="handleQuery"
         >
           <el-option
-            v-for="category in categoryList"
+            v-for="category in serviceCategoryList"
             :key="category.categoryId"
             :label="category.categoryName"
             :value="category.categoryId"
           ></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="地址" prop="address">
-        <el-input
-          v-model="queryParams.address"
-          placeholder="请输入地址"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="容量/规模" prop="capacity">
-        <el-input
-          v-model="queryParams.capacity"
-          placeholder="请输入容量/规模"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
       </el-form-item>
       <el-form-item>
         <el-button
@@ -82,7 +67,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['pubservice:resources:add']"
+          v-hasPermi="['pubservice:quality:add']"
           >新增</el-button
         >
       </el-col>
@@ -94,7 +79,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['pubservice:resources:edit']"
+          v-hasPermi="['pubservice:quality:edit']"
           >修改</el-button
         >
       </el-col>
@@ -106,7 +91,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['pubservice:resources:remove']"
+          v-hasPermi="['pubservice:quality:remove']"
           >删除</el-button
         >
       </el-col>
@@ -117,7 +102,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['pubservice:resources:export']"
+          v-hasPermi="['pubservice:quality:export']"
           >导出</el-button
         >
       </el-col>
@@ -129,18 +114,17 @@
 
     <el-table
       v-loading="loading"
-      :data="resourcesList"
+      :data="qualityList"
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="资源ID" align="center" prop="resourceId" />
+      <el-table-column label="服务ID" align="center" prop="serviceId" />
       <el-table-column label="所属城市" align="center" prop="cityName" />
-      <el-table-column label="资源名称" align="center" prop="resourceName" />
-      <!-- <el-table-column label="资源类型" align="center" prop="categoryId" /> -->
-      <el-table-column label="资源类型" align="center" prop="categoryName" />
-      <el-table-column label="地址" align="center" prop="address" />
-      <el-table-column label="容量/规模" align="center" prop="capacity" />
-      <!-- <el-table-column label="状态" align="center" prop="status" /> -->
+      <el-table-column label="服务名称" align="center" prop="serviceName" />
+      <!-- <el-table-column label="服务类别" align="center" prop="categoryId" /> -->
+      <el-table-column label="服务类型" align="center" prop="categoryName" />
+      <el-table-column label="服务内容" align="center" prop="description" />
+      <el-table-column label="服务质量" align="center" prop="quality" />
       <el-table-column label="资源状态" align="center" prop="status">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
@@ -160,7 +144,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['pubservice:resources:edit']"
+            v-hasPermi="['pubservice:quality:edit']"
             >修改</el-button
           >
           <el-button
@@ -168,7 +152,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['pubservice:resources:remove']"
+            v-hasPermi="['pubservice:quality:remove']"
             >删除</el-button
           >
         </template>
@@ -183,35 +167,46 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改公共资源对话框 -->
+    <!-- 添加或修改服务质量对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="所属城市" prop="cityName">
           <el-input v-model="form.cityName" placeholder="请输入所属城市" />
         </el-form-item>
-        <el-form-item label="资源名称" prop="resourceName">
-          <el-input v-model="form.resourceName" placeholder="请输入资源名称" />
+        <el-form-item label="服务名称" prop="serviceName">
+          <el-input v-model="form.serviceName" placeholder="请输入服务名称" />
         </el-form-item>
-        <!-- <el-form-item label="资源类型" prop="categoryId">
-          <el-input v-model="form.categoryId" placeholder="请输入资源类型" />
+        <!-- <el-form-item label="服务类别" prop="categoryId">
+          <el-input v-model="form.categoryId" placeholder="请输入服务类别" />
         </el-form-item> -->
-        <el-form-item label="资源类型" prop="categoryId">
-          <el-select v-model="form.categoryId" placeholder="请选择资源类型">
+
+        <el-form-item label="服务类型" prop="categoryId">
+          <el-select v-model="form.categoryId" placeholder="请选择服务类型">
             <el-option
-              v-for="category in categoryList"
+              v-for="category in serviceCategoryList"
               :key="category.categoryId"
               :label="category.categoryName"
               :value="category.categoryId"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="form.address" placeholder="请输入地址" />
+
+        <el-form-item label="服务内容" prop="description">
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
-        <el-form-item label="容量/规模" prop="capacity">
-          <el-input v-model="form.capacity" placeholder="请输入容量/规模" />
+        <el-form-item label="服务质量" prop="quality">
+          <el-input
+            v-model="form.quality"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
-        <el-form-item label="设施类别" prop="status">
+
+        <el-form-item label="服务状态" prop="status">
           <el-switch
             v-model="form.status"
             :active-value="'0'"
@@ -231,18 +226,19 @@
 
 <script>
 import {
-  listResources,
-  getResources,
-  delResources,
-  addResources,
-  updateResources,
-} from "@/api/pubservice/resources";
-import { listCategory } from "@/api/pubservice/category";
+  listQuality,
+  getQuality,
+  delQuality,
+  addQuality,
+  updateQuality,
+} from "@/api/pubservice/quality";
+
+import { listServicecategory } from "@/api/pubservice/servicecategory";
 export default {
-  name: "Resources",
+  name: "Quality",
   data() {
     return {
-      categoryList: [],
+      serviceCategoryList: [],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -255,8 +251,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 公共资源表格数据
-      resourcesList: [],
+      // 服务质量表格数据
+      qualityList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -266,10 +262,10 @@ export default {
         pageNum: 1,
         pageSize: 10,
         cityName: null,
-        resourceName: null,
+        serviceName: null,
         categoryId: null,
-        address: null,
-        capacity: null,
+        description: null,
+        quality: null,
         status: null,
       },
       // 表单参数
@@ -279,9 +275,7 @@ export default {
     };
   },
   created() {
-    // this.getCategories();
-    // this.getList();
-    this.getCategories()
+    this.getServicecategory()
       .then(() => {
         // 当获取类别完成后再调用 this.getList()
         this.getList();
@@ -290,33 +284,35 @@ export default {
         // 处理获取类型列表失败的情况
         console.error("Failed to get categories:", error);
       });
+
+    this.getList();
   },
   methods: {
-    async getCategories() {
-      await listCategory().then((response) => {
-        this.categoryList = response.rows;
-        // console.log("公共资源类别", this.categoryList);
+    async getServicecategory() {
+      await listServicecategory().then((response) => {
+        this.serviceCategoryList = response.rows;
       });
     },
-    /** 查询公共资源列表 */
+    /** 查询服务质量列表 */
     getList() {
       this.loading = true;
-      listResources(this.queryParams).then((response) => {
-        this.resourcesList = response.rows;
-        this.resourcesList.forEach((resource) => {
+      listQuality(this.queryParams).then((response) => {
+        this.qualityList = response.rows;
+
+        this.qualityList.forEach((quality) => {
           // 找到匹配的类型对象
-          const category = this.categoryList.find(
-            (cat) => cat.categoryId === resource.categoryId
+          const category = this.serviceCategoryList.find(
+            (cat) => cat.categoryId === quality.categoryId
           );
           // 如果找到了匹配的类型，则将其名称赋给资源对象的 categoryName 属性
           if (category) {
-            resource.categoryName = category.categoryName;
+            quality.categoryName = category.categoryName;
           } else {
             // 如果没有找到匹配的类型，则给一个默认的值，或者你可以根据情况处理
-            resource.categoryName = "Unknown";
+            quality.categoryName = "Unknown";
           }
         });
-        // console.log("类别名称", this.resourcesList);
+
         this.total = response.total;
         this.loading = false;
       });
@@ -329,12 +325,12 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        resourceId: null,
+        serviceId: null,
         cityName: null,
-        resourceName: null,
+        serviceName: null,
         categoryId: null,
-        address: null,
-        capacity: null,
+        description: null,
+        quality: null,
         status: null,
       };
       this.resetForm("form");
@@ -351,7 +347,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.resourceId);
+      this.ids = selection.map((item) => item.serviceId);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
@@ -359,30 +355,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加公共资源";
+      this.title = "添加服务质量";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const resourceId = row.resourceId || this.ids;
-      getResources(resourceId).then((response) => {
+      const serviceId = row.serviceId || this.ids;
+      getQuality(serviceId).then((response) => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改公共资源";
+        this.title = "修改服务质量";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.form.resourceId != null) {
-            updateResources(this.form).then((response) => {
+          if (this.form.serviceId != null) {
+            updateQuality(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addResources(this.form).then((response) => {
+            addQuality(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -393,11 +389,11 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const resourceIds = row.resourceId || this.ids;
+      const serviceIds = row.serviceId || this.ids;
       this.$modal
-        .confirm('是否确认删除公共资源编号为"' + resourceIds + '"的数据项？')
+        .confirm('是否确认删除服务质量编号为"' + serviceIds + '"的数据项？')
         .then(function () {
-          return delResources(resourceIds);
+          return delQuality(serviceIds);
         })
         .then(() => {
           this.getList();
@@ -408,11 +404,11 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       this.download(
-        "pubservice/resources/export",
+        "pubservice/quality/export",
         {
           ...this.queryParams,
         },
-        `resources_${new Date().getTime()}.xlsx`
+        `quality_${new Date().getTime()}.xlsx`
       );
     },
   },
