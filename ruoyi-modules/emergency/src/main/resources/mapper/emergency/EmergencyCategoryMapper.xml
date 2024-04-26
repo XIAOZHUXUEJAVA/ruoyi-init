@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.emergency.mapper.EmergencyCategoryMapper">
+    
+    <resultMap type="EmergencyCategory" id="EmergencyCategoryResult">
+        <result property="categoryId"    column="category_id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectEmergencyCategoryVo">
+        select category_id, category_name, description from emergency_category
+    </sql>
+
+    <select id="selectEmergencyCategoryList" parameterType="EmergencyCategory" resultMap="EmergencyCategoryResult">
+        <include refid="selectEmergencyCategoryVo"/>
+        <where>  
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectEmergencyCategoryByCategoryId" parameterType="Long" resultMap="EmergencyCategoryResult">
+        <include refid="selectEmergencyCategoryVo"/>
+        where category_id = #{categoryId}
+    </select>
+        
+    <insert id="insertEmergencyCategory" parameterType="EmergencyCategory" useGeneratedKeys="true" keyProperty="categoryId">
+        insert into emergency_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">category_name,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null">#{categoryName},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEmergencyCategory" parameterType="EmergencyCategory">
+        update emergency_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteEmergencyCategoryByCategoryId" parameterType="Long">
+        delete from emergency_category where category_id = #{categoryId}
+    </delete>
+
+    <delete id="deleteEmergencyCategoryByCategoryIds" parameterType="String">
+        delete from emergency_category where category_id in 
+        <foreach item="categoryId" collection="array" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </delete>
+</mapper>
