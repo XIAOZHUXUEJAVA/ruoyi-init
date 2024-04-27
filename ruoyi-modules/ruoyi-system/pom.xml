@@ -78,6 +78,14 @@
             <artifactId>ruoyi-common-swagger</artifactId>
         </dependency>
 
+        <!-- RuoYi Common Core-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-api-pubservice</artifactId>
+            <version>3.6.4</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

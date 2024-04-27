@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.pubservice.api.RemoteResourcesService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -323,4 +325,15 @@ public class SysUserController extends BaseController
     {
         return success(deptService.selectDeptTreeList(dept));
     }
+
+
+
+
+    @Autowired
+    private RemoteResourcesService remoteResourcesService;
+    @GetMapping("/test/role")
+    public R<String> getTest(Long userId) {
+        return remoteResourcesService.getResourcesRemote(userId);
+    }
+
 }

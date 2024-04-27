@@ -3,6 +3,8 @@ package com.ruoyi.pubservice.controller;
 import java.util.List;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,5 +103,12 @@ public class CityResourcesController extends BaseController
     public AjaxResult remove(@PathVariable Long[] resourceIds)
     {
         return toAjax(cityResourcesService.deleteCityResourcesByResourceIds(resourceIds));
+    }
+
+
+
+    @GetMapping("/get/{id}")
+    public R<String> getResourcesRemote(@PathVariable("id") Long id) {
+        return R.ok("资源", "调用成功");
     }
 }
