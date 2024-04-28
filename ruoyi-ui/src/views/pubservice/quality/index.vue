@@ -125,10 +125,10 @@
       <el-table-column label="服务类型" align="center" prop="categoryName" />
       <el-table-column label="服务内容" align="center" prop="description" />
       <el-table-column label="服务质量" align="center" prop="quality" />
-      <el-table-column label="资源状态" align="center" prop="status">
+      <el-table-column label="服务状态" align="center" prop="status">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-            {{ scope.row.status === "0" ? "正常" : "禁用" }}
+            {{ scope.row.status === "0" ? "已完成" : "服务中" }}
           </el-tag>
         </template>
       </el-table-column>
@@ -211,8 +211,8 @@
             v-model="form.status"
             :active-value="'0'"
             :inactive-value="'1'"
-            active-text="正常"
-            inactive-text="禁用"
+            active-text="已完成"
+            inactive-text="服务中"
           />
         </el-form-item>
       </el-form>
@@ -285,7 +285,7 @@ export default {
         console.error("Failed to get categories:", error);
       });
 
-    this.getList();
+    // this.getList();
   },
   methods: {
     async getServicecategory() {

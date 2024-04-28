@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.emergency.mapper.CityEmergencyMapper">
+    
+    <resultMap type="CityEmergency" id="CityEmergencyResult">
+        <result property="emergencyId"    column="emergency_id"    />
+        <result property="cityName"    column="city_name"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="description"    column="description"    />
+        <result property="emergencyAddress"    column="emergency_address"    />
+        <result property="status"    column="status"    />
+        <result property="emergencyDate"    column="emergency_date"    />
+    </resultMap>
+
+    <sql id="selectCityEmergencyVo">
+        select emergency_id, city_name, category_id, description, emergency_address, status, emergency_date from city_emergency
+    </sql>
+
+    <select id="selectCityEmergencyList" parameterType="CityEmergency" resultMap="CityEmergencyResult">
+        <include refid="selectCityEmergencyVo"/>
+        <where>  
+            <if test="cityName != null  and cityName != ''"> and city_name like concat('%', #{cityName}, '%')</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="emergencyAddress != null  and emergencyAddress != ''"> and emergency_address = #{emergencyAddress}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="emergencyDate != null "> and emergency_date = #{emergencyDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectCityEmergencyByEmergencyId" parameterType="Long" resultMap="CityEmergencyResult">
+        <include refid="selectCityEmergencyVo"/>
+        where emergency_id = #{emergencyId}
+    </select>
+        
+    <insert id="insertCityEmergency" parameterType="CityEmergency" useGeneratedKeys="true" keyProperty="emergencyId">
+        insert into city_emergency
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">city_name,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="description != null">description,</if>
+            <if test="emergencyAddress != null">emergency_address,</if>
+            <if test="status != null">status,</if>
+            <if test="emergencyDate != null">emergency_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cityName != null">#{cityName},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="description != null">#{description},</if>
+            <if test="emergencyAddress != null">#{emergencyAddress},</if>
+            <if test="status != null">#{status},</if>
+            <if test="emergencyDate != null">#{emergencyDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCityEmergency" parameterType="CityEmergency">
+        update city_emergency
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityName != null">city_name = #{cityName},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="emergencyAddress != null">emergency_address = #{emergencyAddress},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="emergencyDate != null">emergency_date = #{emergencyDate},</if>
+        </trim>
+        where emergency_id = #{emergencyId}
+    </update>
+
+    <delete id="deleteCityEmergencyByEmergencyId" parameterType="Long">
+        delete from city_emergency where emergency_id = #{emergencyId}
+    </delete>
+
+    <delete id="deleteCityEmergencyByEmergencyIds" parameterType="String">
+        delete from city_emergency where emergency_id in 
+        <foreach item="emergencyId" collection="array" open="(" separator="," close=")">
+            #{emergencyId}
+        </foreach>
+    </delete>
+</mapper>
