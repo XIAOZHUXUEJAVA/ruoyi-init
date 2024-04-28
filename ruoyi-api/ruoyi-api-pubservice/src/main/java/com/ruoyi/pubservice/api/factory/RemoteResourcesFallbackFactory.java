@@ -1,5 +1,6 @@
 package com.ruoyi.pubservice.api.factory;
 
+import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.pubservice.api.RemoteResourcesService;
 import org.slf4j.Logger;
 import com.ruoyi.common.core.domain.R;
@@ -22,6 +23,13 @@ public class RemoteResourcesFallbackFactory implements FallbackFactory<RemoteRes
             public R<String> getResourcesRemote(Long id) {
 
                 return R.fail("获取用户失败:" + throwable.getMessage());
+
+            }
+
+            @Override
+            public AjaxResult getResourceInfoByIdRemote(Long resourceId) {
+
+                return new AjaxResult(500, "获取");
 
             }
 

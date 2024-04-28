@@ -111,4 +111,15 @@ public class CityResourcesController extends BaseController
     public R<String> getResourcesRemote(@PathVariable("id") Long id) {
         return R.ok("资源", "调用成功");
     }
+
+    /**
+     * 获取公共资源详细信息
+     */
+    @GetMapping(value = "/test/{resourceId}")
+    public AjaxResult getInfoByIdRemote(@PathVariable("resourceId") Long resourceId)
+    {
+        return success(cityResourcesService.selectCityResourcesByResourceId(resourceId));
+    }
+
+
 }

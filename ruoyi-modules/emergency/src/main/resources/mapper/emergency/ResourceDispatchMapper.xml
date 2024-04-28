@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.emergency.mapper.ResourceDispatchMapper">
+    
+    <resultMap type="ResourceDispatch" id="ResourceDispatchResult">
+        <result property="dispatchId"    column="dispatch_id"    />
+        <result property="emergencyId"    column="emergency_id"    />
+        <result property="resourceId"    column="resource_id"    />
+        <result property="content"    column="content"    />
+        <result property="status"    column="status"    />
+        <result property="dispatchDate"    column="dispatch_date"    />
+    </resultMap>
+
+
+    <!--<resultMap type="ResourceDispatchVo" id="ResourceDispatchVoResult">
+        <result property="dispatchId"    column="dispatch_id"    />
+        <result property="emergencyId"    column="emergency_id"    />
+        <result property="resourceName"    column="resource_name"    />
+        <result property="content"    column="content"    />
+        <result property="status"    column="status"    />
+        <result property="dispatchDate"    column="dispatch_date"    />
+    </resultMap>-->
+
+
+    <!--<select id="selectResourceDispatchListVo" parameterType="ResourceDispatchVo" resultMap="ResourceDispatchVoResult">
+        SELECT
+        rd.dispatch_id,
+        rd.emergency_id,
+        cr.resource_name AS resource_name,  &#45;&#45; 从city_resources表中获取resource_name
+        rd.content,
+        rd.status,
+        rd.dispatch_date
+        FROM
+        resource_dispatch rd
+        JOIN
+        city_resources cr ON rd.resource_id = cr.resource_id
+        <where>
+            <if test="emergencyId != null "> and emergency_id = #{emergencyId}</if>
+            <if test="resourceName != null and resourceName != ''"> and resource_name = #{resourceName}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="dispatchDate != null "> and dispatch_date = #{dispatchDate}</if>
+        </where>
+    </select>-->
+
+
+
+    <sql id="selectResourceDispatchVo">
+        select dispatch_id, emergency_id, resource_id, content, status, dispatch_date from resource_dispatch
+    </sql>
+
+    <select id="selectResourceDispatchList" parameterType="ResourceDispatch" resultMap="ResourceDispatchResult">
+        <include refid="selectResourceDispatchVo"/>
+        <where>  
+            <if test="emergencyId != null "> and emergency_id = #{emergencyId}</if>
+            <if test="resourceId != null "> and resource_id = #{resourceId}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="dispatchDate != null "> and dispatch_date = #{dispatchDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectResourceDispatchByDispatchId" parameterType="Long" resultMap="ResourceDispatchResult">
+        <include refid="selectResourceDispatchVo"/>
+        where dispatch_id = #{dispatchId}
+    </select>
+        
+    <insert id="insertResourceDispatch" parameterType="ResourceDispatch" useGeneratedKeys="true" keyProperty="dispatchId">
+        insert into resource_dispatch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="emergencyId != null">emergency_id,</if>
+            <if test="resourceId != null">resource_id,</if>
+            <if test="content != null">content,</if>
+            <if test="status != null">status,</if>
+            <if test="dispatchDate != null">dispatch_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="emergencyId != null">#{emergencyId},</if>
+            <if test="resourceId != null">#{resourceId},</if>
+            <if test="content != null">#{content},</if>
+            <if test="status != null">#{status},</if>
+            <if test="dispatchDate != null">#{dispatchDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResourceDispatch" parameterType="ResourceDispatch">
+        update resource_dispatch
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="emergencyId != null">emergency_id = #{emergencyId},</if>
+            <if test="resourceId != null">resource_id = #{resourceId},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="dispatchDate != null">dispatch_date = #{dispatchDate},</if>
+        </trim>
+        where dispatch_id = #{dispatchId}
+    </update>
+
+    <delete id="deleteResourceDispatchByDispatchId" parameterType="Long">
+        delete from resource_dispatch where dispatch_id = #{dispatchId}
+    </delete>
+
+    <delete id="deleteResourceDispatchByDispatchIds" parameterType="String">
+        delete from resource_dispatch where dispatch_id in 
+        <foreach item="dispatchId" collection="array" open="(" separator="," close=")">
+            #{dispatchId}
+        </foreach>
+    </delete>
+</mapper>

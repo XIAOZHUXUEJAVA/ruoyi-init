@@ -336,4 +336,9 @@ public class SysUserController extends BaseController
         return remoteResourcesService.getResourcesRemote(userId);
     }
 
+    @GetMapping("/test/get/role")
+    public AjaxResult getResourceByIdTest(Long resourceId) {
+        return remoteResourcesService.getResourceInfoByIdRemote(resourceId);
+    }
+
 }
