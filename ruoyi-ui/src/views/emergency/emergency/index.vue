@@ -16,13 +16,26 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="类别ID" prop="categoryId">
-        <el-input
+      <el-form-item label="事件类别" prop="categoryId">
+        <!-- <el-input
           v-model="queryParams.categoryId"
           placeholder="请输入类别ID"
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        /> -->
+        <el-select
+          v-model="queryParams.categoryId"
+          placeholder="请选择事件类型"
+          clearable
+          @keyup.enter.native="handleQuery"
+        >
+          <el-option
+            v-for="category in categoryList"
+            :key="category.categoryId"
+            :label="category.categoryName"
+            :value="category.categoryId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="事件地址" prop="emergencyAddress">
         <el-input
@@ -33,12 +46,21 @@
         />
       </el-form-item>
       <el-form-item label="事件状态" prop="status">
-        <el-input
+        <el-select
+          v-model="queryParams.status"
+          placeholder="请选择事件状态"
+          clearable
+          @change="handleQuery"
+        >
+          <el-option label="已处理" value="0"></el-option>
+          <el-option label="未处理" value="1"></el-option>
+        </el-select>
+        <!-- <el-input
           v-model="queryParams.status"
           placeholder="请输入事件状态"
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        /> -->
       </el-form-item>
       <el-form-item label="事件日期" prop="emergencyDate">
         <el-date-picker

@@ -25,12 +25,21 @@
         />
       </el-form-item>
       <el-form-item label="设施类别" prop="isPublic">
-        <el-input
+        <!-- <el-input
           v-model="queryParams.isPublic"
           placeholder="请输入设施类别"
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        /> -->
+        <el-select
+          v-model="queryParams.isPublic"
+          placeholder="请选择设施类别"
+          clearable
+          @change="handleQuery"
+        >
+          <el-option label="公有" value="0"></el-option>
+          <el-option label="私有" value="1"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="设施地址" prop="address">
         <el-input
@@ -47,6 +56,23 @@
           clearable
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="设施状态" prop="status">
+        <!-- <el-input
+          v-model="queryParams.isPublic"
+          placeholder="请输入设施类别"
+          clearable
+          @keyup.enter.native="handleQuery"
+        /> -->
+        <el-select
+          v-model="queryParams.status"
+          placeholder="请选择设施状态"
+          clearable
+          @change="handleQuery"
+        >
+          <el-option label="正常" value="0"></el-option>
+          <el-option label="禁用" value="1"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button

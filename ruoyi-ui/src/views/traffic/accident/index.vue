@@ -25,12 +25,21 @@
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-input
+        <!-- <el-input
           v-model="queryParams.status"
           placeholder="请输入状态 "
           clearable
           @keyup.enter.native="handleQuery"
-        />
+        /> -->
+        <el-select
+          v-model="queryParams.status"
+          placeholder="请选择事件状态"
+          clearable
+          @change="handleQuery"
+        >
+          <el-option label="已处理" value="0"></el-option>
+          <el-option label="未处理" value="1"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="记录日期" prop="recordDate">
         <el-date-picker
