@@ -120,7 +120,15 @@
       <!-- <el-table-column label="调度资源ID" align="center" prop="resourceId" /> -->
       <el-table-column label="调度资源" align="center" prop="resourceName" />
       <el-table-column label="调度内容" align="center" prop="content" />
-      <el-table-column label="调度状态" align="center" prop="status" />
+      <!-- <el-table-column label="调度状态" align="center" prop="status" /> -->
+      <el-table-column label="调度状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
+            {{ scope.row.status === "0" ? "已完成" : "调度中" }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column
         label="调度日期"
         align="center"
@@ -186,9 +194,19 @@
         <el-form-item label="调度内容">
           <editor v-model="form.content" :min-height="192" />
         </el-form-item>
-        <el-form-item label="调度状态" prop="status">
+        <!-- <el-form-item label="调度状态" prop="status">
           <el-input v-model="form.status" placeholder="请输入调度状态" />
+        </el-form-item> -->
+        <el-form-item label="调度状态" prop="status">
+          <el-switch
+            v-model="form.status"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="已完成"
+            inactive-text="调度中"
+          />
         </el-form-item>
+
         <el-form-item label="调度日期" prop="dispatchDate">
           <el-date-picker
             clearable
