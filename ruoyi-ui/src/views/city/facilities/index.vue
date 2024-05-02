@@ -179,7 +179,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="设施容量" align="center" prop="capacity" />
+      <el-table-column label="设施容量(人)" align="center" prop="capacity" />
       <el-table-column
         label="操作"
         align="center"

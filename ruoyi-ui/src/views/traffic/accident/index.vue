@@ -154,7 +154,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-off"
             @click="handleTrafficAccident(scope.row)"
             v-hasPermi="['traffic:accident:edit']"
             >处理</el-button

@@ -151,14 +151,14 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-on"
             @click="handleGPT(scope.row)"
             >决策</el-button
           >
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-off"
             @click="handleVisual(scope.row)"
             >可视化</el-button
           >

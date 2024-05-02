@@ -16,14 +16,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="调度资源ID" prop="resourceId">
+      <!-- <el-form-item label="调度资源ID" prop="resourceId">
         <el-input
           v-model="queryParams.resourceId"
           placeholder="请输入调度资源ID"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="调度状态" prop="status">
         <!-- <el-input
           v-model="queryParams.status"
@@ -157,7 +157,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-off"
             @click="handleDispatch(scope.row)"
             v-hasPermi="['emergency:dispatch:edit']"
             >调度</el-button

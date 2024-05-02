@@ -101,7 +101,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-off"
             @click="showTrafficMap(scope.row)"
             v-hasPermi="['traffic:traffic:edit']"
             >交通实况</el-button
@@ -110,7 +110,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-search"
             @click="showTrafficDetail(scope.row)"
             v-hasPermi="['traffic:traffic:edit']"
             >查看详情</el-button

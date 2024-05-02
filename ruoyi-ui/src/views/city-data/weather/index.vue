@@ -205,7 +205,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-on"
             @click="handleGPT(scope.row)"
             v-hasPermi="['city-data:weather:edit']"
             >决策</el-button
@@ -214,7 +214,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-off"
             @click="showWeatherVisual(scope.row)"
             v-hasPermi="['city-data:weather:edit']"
             >可视化</el-button
@@ -223,10 +223,10 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-search"
             @click="getWeatherApi(scope.row)"
             v-hasPermi="['city-data:weather:edit']"
-            >获取实时天气</el-button
+            >实时天气</el-button
           >
           <el-button
             size="mini"

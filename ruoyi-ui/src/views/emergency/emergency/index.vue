@@ -183,7 +183,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-star-off"
             @click="handleResponse(scope.row)"
             v-hasPermi="['emergency:emergency:edit']"
             >响应</el-button

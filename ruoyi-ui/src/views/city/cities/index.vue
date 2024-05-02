@@ -53,7 +53,7 @@
       <el-form-item label="城市面积" prop="area">
         <el-input
           v-model="queryParams.area"
-          placeholder="请输入城市面积"
+          placeholder="请输入城市面积(km²)"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -158,7 +158,7 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column label="城市面积" align="center" prop="area" />
+      <el-table-column label="城市面积(km²)" align="center" prop="area" />
       <el-table-column
         label="操作"
         align="center"
@@ -233,8 +233,8 @@
             ></i>
           </div>
         </el-form-item>
-        <el-form-item label="城市面积" prop="area">
-          <el-input v-model="form.area" placeholder="请输入城市面积" />
+        <el-form-item label="城市面积(km²)" prop="area">
+          <el-input v-model="form.area" placeholder="请输入城市面积(km²)" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

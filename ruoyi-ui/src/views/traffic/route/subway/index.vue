@@ -147,7 +147,7 @@ export default {
 
 <style scoped>
 #container {
-  width: 1200px;
+  width: 1300px;
   height: 600px;
 }
 </style>
