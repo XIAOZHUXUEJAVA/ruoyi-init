@@ -12,9 +12,13 @@
     :scroll-wheel-zoom="true"
   >
     <bm-map-type
+      :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']"
+      anchor="BMAP_ANCHOR_TOP_LEFT"
+    ></bm-map-type>
+    <!-- <bm-map-type
       :map-types="['BMAP_HYBRID_MAP', 'BMAP_NORMAL_MAP']"
       anchor="BMAP_ANCHOR_TOP_RIGHT"
-    ></bm-map-type>
+    ></bm-map-type> -->
     <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
     <bm-panorama anchor="BMAP_ANCHOR_BOTTOM_RIGHT"></bm-panorama>
     <bm-scale anchor="BMAP_ANCHOR_MIDDLE_RIGHT"></bm-scale>

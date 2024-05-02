@@ -24,8 +24,8 @@
 export default {
   data() {
     return {
-      location: "北京",
-      keyword: "百度",
+      location: "济南",
+      keyword: "山东建筑大学",
     };
   },
 };

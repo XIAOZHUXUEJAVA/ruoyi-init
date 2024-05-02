@@ -24,6 +24,7 @@
         :start="start"
         :end="end"
         :auto-viewport="true"
+        :panel="true"
       ></bm-transit>
     </baidu-map>
   </div>
@@ -52,7 +53,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .bm-view {
   width: 1450px;
   height: 600px;

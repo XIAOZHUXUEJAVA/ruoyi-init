@@ -52,7 +52,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .bm-view {
   width: 1450px;
   height: 600px;

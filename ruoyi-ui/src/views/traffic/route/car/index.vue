@@ -35,23 +35,49 @@
         :auto-viewport="true"
         :policy="currentPolicy"
         :panel="true"
+        @searchcomplete="handleSearchComplete"
       >
       </bm-driving>
+      <bml-lushu
+        @stop="reset"
+        :path="path"
+        :icon="icon"
+        :play="play"
+        :rotation="true"
+      >
+      </bml-lushu>
     </baidu-map>
   </div>
 </template>
 
 <script>
+import { BmlLushu } from "vue-baidu-map";
 export default {
+  components: {
+    BmlLushu,
+  },
   data() {
     return {
       start: "",
       end: "",
       route: false,
       currentPolicy: "BMAP_DRIVING_POLICY_LEAST_DISTANCE", // 默认为最短距离
+      play: true,
+      path: [],
+      icon: {
+        url: "http://api.map.baidu.com/library/LuShu/1.2/examples/car.png",
+        size: { width: 52, height: 26 },
+        opts: { anchor: { width: 27, height: 13 } },
+      },
     };
   },
   methods: {
+    reset() {
+      this.play = false;
+    },
+    handleSearchComplete(res) {
+      this.path = res.getPlan(0).getRoute(0).getPath();
+    },
     search() {
       if (this.start && this.end) {
         this.route = true;
@@ -75,7 +101,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .bm-view {
   width: 1450px;
   height: 600px;
