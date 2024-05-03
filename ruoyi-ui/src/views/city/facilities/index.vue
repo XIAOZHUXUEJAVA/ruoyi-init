@@ -325,7 +325,6 @@ export default {
   },
   methods: {
     showLocationOnMap(address) {
-      console.log(address);
       this.keyword = address;
       this.showMap = true;
     },

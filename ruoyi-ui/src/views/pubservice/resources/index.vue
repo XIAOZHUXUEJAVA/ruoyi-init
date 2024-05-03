@@ -133,7 +133,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="资源ID" align="center" prop="resourceId" />
+      <el-table-column label="资源编号" align="center" prop="resourceId" />
       <el-table-column label="所属城市" align="center" prop="cityName" />
       <el-table-column label="资源名称" align="center" prop="resourceName" />
       <!-- <el-table-column label="资源类型" align="center" prop="categoryId" /> -->
@@ -295,7 +295,6 @@ export default {
     async getCategories() {
       await listCategory().then((response) => {
         this.categoryList = response.rows;
-        // console.log("公共资源类别", this.categoryList);
       });
     },
     /** 查询公共资源列表 */
@@ -316,7 +315,6 @@ export default {
             resource.categoryName = "Unknown";
           }
         });
-        // console.log("类别名称", this.resourcesList);
         this.total = response.total;
         this.loading = false;
       });

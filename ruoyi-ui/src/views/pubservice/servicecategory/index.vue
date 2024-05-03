@@ -89,7 +89,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="类别ID" align="center" prop="categoryId" />
+      <el-table-column label="类别编号" align="center" prop="categoryId" />
       <el-table-column label="类别名称" align="center" prop="categoryName" />
       <el-table-column label="描述" align="center" prop="description" />
       <el-table-column

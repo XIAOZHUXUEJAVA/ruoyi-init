@@ -1,8 +1,17 @@
 <template>
   <div>
-    <input type="text" v-model="startPoint" placeholder="起点" />
-    <input type="text" v-model="endPoint" placeholder="终点" />
-    <button @click="searchRoute">搜索</button>
+    <el-form :inline="true" :model="form" ref="form" size="small">
+      <el-form-item label="起点">
+        <el-input v-model="form.startPoint" placeholder="请输入起点"></el-input>
+      </el-form-item>
+      <el-form-item label="终点">
+        <el-input v-model="form.endPoint" placeholder="请输入终点"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="searchRoute">搜索</el-button>
+      </el-form-item>
+    </el-form>
+
     <div id="container"></div>
     <div id="panel"></div>
   </div>
@@ -13,8 +22,10 @@ export default {
   name: "RidingRouteMap",
   data() {
     return {
-      startPoint: "",
-      endPoint: "",
+      form: {
+        startPoint: "",
+        endPoint: "",
+      },
     };
   },
   mounted() {
@@ -38,38 +49,10 @@ export default {
           panel: "panel",
         },
       });
-      if (this.startPoint && this.endPoint) {
-        riding.search(this.startPoint, this.endPoint);
+      if (this.form.startPoint && this.form.endPoint) {
+        riding.search(this.form.startPoint, this.form.endPoint);
       }
     },
-
-    // searchRoute() {
-    //   var start = new BMapGL.Point(116.310791, 40.003419);
-    //   var end = new BMapGL.Point(116.386419, 40.003519);
-    //   if (this.startPoint && this.endPoint) {
-    //     var startKeyword = this.startPoint;
-    //     var endKeyword = this.endPoint;
-    //     var myGeo = new BMapGL.Geocoder();
-    //     myGeo.getPoint(startKeyword, function (point) {
-    //       if (point) {
-    //         start = point;
-    //       }
-    //     });
-    //     myGeo.getPoint(endKeyword, function (point) {
-    //       if (point) {
-    //         end = point;
-    //       }
-    //     });
-    //   }
-    //   var riding = new BMapGL.RidingRoute(this.map, {
-    //     renderOptions: {
-    //       map: this.map,
-    //       autoViewport: true,
-    //       panel: "panel",
-    //     },
-    //   });
-    //   riding.search(start, end);
-    // },
   },
 };
 </script>

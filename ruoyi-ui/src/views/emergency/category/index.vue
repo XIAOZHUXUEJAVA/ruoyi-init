@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="类别名称" prop="categoryName">
         <el-input
           v-model="queryParams.categoryName"
@@ -10,8 +17,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -24,7 +39,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['emergency:category:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -35,7 +51,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['emergency:category:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -46,7 +63,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['emergency:category:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -56,17 +74,29 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['emergency:category:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="categoryList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="类别ID" align="center" prop="categoryId" />
+      <el-table-column label="类别编号" align="center" prop="categoryId" />
       <el-table-column label="类别名称" align="center" prop="categoryName" />
       <el-table-column label="描述" align="center" prop="description" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -74,20 +104,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['emergency:category:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['emergency:category:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -101,7 +133,11 @@
           <el-input v-model="form.categoryName" placeholder="请输入类别名称" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -113,7 +149,13 @@
 </template>
 
 <script>
-import { listCategory, getCategory, delCategory, addCategory, updateCategory } from "@/api/emergency/category";
+import {
+  listCategory,
+  getCategory,
+  delCategory,
+  addCategory,
+  updateCategory,
+} from "@/api/emergency/category";
 
 export default {
   name: "Category",
@@ -142,13 +184,12 @@ export default {
         pageNum: 1,
         pageSize: 10,
         categoryName: null,
-        description: null
+        description: null,
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      }
+      rules: {},
     };
   },
   created() {
@@ -158,7 +199,7 @@ export default {
     /** 查询事故类别列表 */
     getList() {
       this.loading = true;
-      listCategory(this.queryParams).then(response => {
+      listCategory(this.queryParams).then((response) => {
         this.categoryList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -174,7 +215,7 @@ export default {
       this.form = {
         categoryId: null,
         categoryName: null,
-        description: null
+        description: null,
       };
       this.resetForm("form");
     },
@@ -190,9 +231,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.categoryId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.categoryId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -203,8 +244,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const categoryId = row.categoryId || this.ids
-      getCategory(categoryId).then(response => {
+      const categoryId = row.categoryId || this.ids;
+      getCategory(categoryId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改事故类别";
@@ -212,16 +253,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.categoryId != null) {
-            updateCategory(this.form).then(response => {
+            updateCategory(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addCategory(this.form).then(response => {
+            addCategory(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -233,19 +274,27 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const categoryIds = row.categoryId || this.ids;
-      this.$modal.confirm('是否确认删除事故类别编号为"' + categoryIds + '"的数据项？').then(function() {
-        return delCategory(categoryIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除事故类别编号为"' + categoryIds + '"的数据项？')
+        .then(function () {
+          return delCategory(categoryIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('emergency/category/export', {
-        ...this.queryParams
-      }, `category_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "emergency/category/export",
+        {
+          ...this.queryParams,
+        },
+        `category_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>

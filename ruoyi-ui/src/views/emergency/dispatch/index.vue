@@ -8,18 +8,18 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="事件ID" prop="emergencyId">
+      <el-form-item label="事件编号" prop="emergencyId">
         <el-input
           v-model="queryParams.emergencyId"
-          placeholder="请输入事件ID"
+          placeholder="请输入事件编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="调度资源ID" prop="resourceId">
+      <!-- <el-form-item label="调度资源编号" prop="resourceId">
         <el-input
           v-model="queryParams.resourceId"
-          placeholder="请输入调度资源ID"
+          placeholder="请输入调度资源编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -124,9 +124,9 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="调度ID" align="center" prop="dispatchId" />
-      <el-table-column label="事件ID" align="center" prop="emergencyId" />
-      <!-- <el-table-column label="调度资源ID" align="center" prop="resourceId" /> -->
+      <el-table-column label="调度编号" align="center" prop="dispatchId" />
+      <el-table-column label="事件编号" align="center" prop="emergencyId" />
+      <!-- <el-table-column label="调度资源编号" align="center" prop="resourceId" /> -->
       <el-table-column label="调度资源" align="center" prop="resourceName" />
       <el-table-column label="调度内容" align="center" prop="content" />
       <!-- <el-table-column label="调度状态" align="center" prop="status" /> -->
@@ -194,11 +194,14 @@
     <!-- 添加或修改资源调度对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="事件ID" prop="emergencyId">
-          <el-input v-model="form.emergencyId" placeholder="请输入事件ID" />
+        <el-form-item label="事件编号" prop="emergencyId">
+          <el-input v-model="form.emergencyId" placeholder="请输入事件编号" />
         </el-form-item>
-        <el-form-item label="调度资源ID" prop="resourceId">
-          <el-input v-model="form.resourceId" placeholder="请输入调度资源ID" />
+        <el-form-item label="调度资源编号" prop="resourceId">
+          <el-input
+            v-model="form.resourceId"
+            placeholder="请输入调度资源编号"
+          />
         </el-form-item>
         <el-form-item label="调度内容">
           <editor v-model="form.content" :min-height="192" />
@@ -313,7 +316,6 @@ export default {
         status: row.status,
         dispatchDate: row.dispatchDate,
       };
-      console.log("this.updateDispatchForm", this.updateDispatchForm);
       const prompt = "是否调度" + row.resourceName + "前往现场处理事故?";
       this.$confirm(prompt, "提示", {
         confirmButtonText: "确定",
@@ -344,14 +346,13 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消通知",
+            message: "已取消调度",
           });
         });
     },
     async getResourcesList() {
       await listResources().then((response) => {
         this.resourcesList = response.rows;
-        console.log(this.resourcesList);
       });
     },
     /** 查询资源调度列表 */
@@ -372,8 +373,6 @@ export default {
             dispatch.resourceName = "Unknown";
           }
         });
-        console.log(this.dispatchList);
-
         this.total = response.total;
         this.loading = false;
       });

@@ -19,7 +19,7 @@
       <el-form-item label="事件类别" prop="categoryId">
         <!-- <el-input
           v-model="queryParams.categoryId"
-          placeholder="请输入类别ID"
+          placeholder="请输入类别编号"
           clearable
           @keyup.enter.native="handleQuery"
         /> -->
@@ -145,9 +145,9 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="事件ID" align="center" prop="emergencyId" />
+      <el-table-column label="事件编号" align="center" prop="emergencyId" />
       <el-table-column label="所属城市" align="center" prop="cityName" />
-      <!-- <el-table-column label="类别ID" align="center" prop="categoryId" /> -->
+      <!-- <el-table-column label="类别编号" align="center" prop="categoryId" /> -->
       <el-table-column label="事件类别" align="center" prop="categoryName" />
       <el-table-column label="事件描述" align="center" prop="description" />
       <el-table-column
@@ -223,8 +223,8 @@
         <el-form-item label="所属城市" prop="cityName">
           <el-input v-model="form.cityName" placeholder="请输入所属城市" />
         </el-form-item>
-        <el-form-item label="类别ID" prop="categoryId">
-          <!-- <el-input v-model="form.categoryId" placeholder="请输入类别ID" /> -->
+        <el-form-item label="类别编号" prop="categoryId">
+          <!-- <el-input v-model="form.categoryId" placeholder="请输入类别编号" /> -->
           <el-select v-model="form.categoryId" placeholder="请选择资源类型">
             <el-option
               v-for="category in categoryList"
@@ -366,7 +366,6 @@ export default {
   },
   methods: {
     updateList(success) {
-      console.log(success);
       if (success === "success") {
         this.getList();
       }

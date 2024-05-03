@@ -46,7 +46,6 @@ export default {
         this.cityName + "市",
         function (point) {
           if (point) {
-            console.log(point);
             // 使用保存的 self 引用来访问 cityName
             self.map.centerAndZoom(point, 12);
             self.map.addOverlay(
