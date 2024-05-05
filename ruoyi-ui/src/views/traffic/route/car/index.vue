@@ -58,8 +58,8 @@ export default {
   },
   data() {
     return {
-      start: "",
-      end: "",
+      start: "山东建筑大学",
+      end: "万达",
       route: false,
       currentPolicy: "BMAP_DRIVING_POLICY_LEAST_DISTANCE", // 默认为最短距离
       play: true,

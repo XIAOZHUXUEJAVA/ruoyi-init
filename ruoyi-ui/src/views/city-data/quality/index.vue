@@ -126,7 +126,7 @@
       <el-table-column label="记录编号" align="center" prop="envId" />
       <el-table-column label="城市名称" align="center" prop="cityName" />
       <el-table-column label="空气质量指数" align="center" prop="airQuality" />
-      <el-table-column label="噪音水平" align="center" prop="noiseLevel" />
+      <el-table-column label="噪音水平/dB" align="center" prop="noiseLevel" />
       <el-table-column
         label="污染物排放情况"
         align="center"
@@ -307,6 +307,7 @@ export default {
   },
   methods: {
     handleGPT(row) {
+      this.title = row.cityName + "城市环境质量决策支持";
       this.showGPT = true;
       this.selectedPrompt =
         `针对 ${row.cityName} 的环境情况，根据数据分析，空气质量指数为 ${row.airQuality}AQI，噪音水平为 ${row.noiseLevel}分贝，污染物排放情况为 ${row.pollutantEmission}。请就以上数据，提出以下建议和决策：\n\n` +

@@ -183,9 +183,9 @@
       <el-table-column label="城市名称" align="center" prop="city" />
       <el-table-column label="星期" align="center" prop="week" />
       <el-table-column label="实况时间" align="center" prop="updateDate" />
-      <el-table-column label="实况温度" align="center" prop="tem" />
-      <el-table-column label="白天温度" align="center" prop="temDay" />
-      <el-table-column label="夜间温度" align="center" prop="temNight" />
+      <el-table-column label="实况温度℃" align="center" prop="tem" />
+      <el-table-column label="白天温度℃" align="center" prop="temDay" />
+      <el-table-column label="夜间温度℃" align="center" prop="temNight" />
       <el-table-column label="风向" align="center" prop="win" />
       <el-table-column label="风力" align="center" prop="winSpeed" />
       <el-table-column label="风速" align="center" prop="winMeter" />

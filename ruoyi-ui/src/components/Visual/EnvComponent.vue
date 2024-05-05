@@ -1,5 +1,5 @@
 <template>
-  <div ref="chart" style="width: 100%; height: 600px"></div>
+  <div class="chart-container" ref="chart"></div>
 </template>
 
 <script>
@@ -30,8 +30,12 @@ export default {
 
       const option = {
         title: {
-          text:
-            this.data.cityName + "-环境质量数据可视化-" + this.data.recordDate,
+          text: `${this.data.cityName} - 环境质量数据可视化 - ${this.data.recordDate}`,
+          textStyle: {
+            fontSize: 16,
+            fontWeight: "bold",
+          },
+          left: "center",
         },
         tooltip: {
           trigger: "axis",
@@ -39,13 +43,24 @@ export default {
         xAxis: {
           type: "category",
           data: ["空气质量指数", "噪音水平"],
+          axisLabel: {
+            fontSize: 14,
+          },
         },
         yAxis: {},
         series: [
           {
             name: "数据",
             type: "bar",
-            data: [this.data.airQuality, this.data.noiseLevel],
+            barWidth: "60%",
+            data: [
+              { value: this.data.airQuality, itemStyle: { color: "#5470c6" } },
+              { value: this.data.noiseLevel, itemStyle: { color: "#91cc75" } },
+            ],
+            // data: [this.data.airQuality, this.data.noiseLevel],
+            // itemStyle: {
+            //   color: "#5470c6",
+            // },
           },
         ],
       };
@@ -56,6 +71,9 @@ export default {
 };
 </script>
 
-<style>
-/* 这里可以添加样式 */
+<style scoped>
+.chart-container {
+  width: 100%;
+  height: 600px;
+}
 </style>

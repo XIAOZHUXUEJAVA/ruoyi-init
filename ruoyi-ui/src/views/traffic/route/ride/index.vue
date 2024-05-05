@@ -23,8 +23,8 @@ export default {
   data() {
     return {
       form: {
-        startPoint: "",
-        endPoint: "",
+        startPoint: "山东建筑大学",
+        endPoint: "山东师范大学",
       },
     };
   },

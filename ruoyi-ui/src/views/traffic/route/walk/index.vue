@@ -33,8 +33,8 @@
 export default {
   data() {
     return {
-      start: "",
-      end: "",
+      start: "山东建筑大学",
+      end: "万达",
       route: false,
     };
   },
