@@ -248,7 +248,14 @@
           />
         </el-form-item>
         <el-form-item label="事件状态" prop="status">
-          <el-input v-model="form.status" placeholder="请输入事件状态" />
+          <!-- <el-input v-model="form.status" placeholder="请输入事件状态" /> -->
+          <el-switch
+            v-model="form.status"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="已处理"
+            inactive-text="未处理"
+          />
         </el-form-item>
         <el-form-item label="事件日期" prop="emergencyDate">
           <el-date-picker

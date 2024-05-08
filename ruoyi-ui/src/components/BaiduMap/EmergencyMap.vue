@@ -54,11 +54,12 @@ export default {
   },
   methods: {
     handleKeyword(categoryName) {
-      console.log("handleKeyword", categoryName);
       if (categoryName === "火灾") {
         this.keyword = "消防";
       } else if (categoryName === "电力") {
         this.keyword = "电网";
+      } else if (categoryName === "公共卫生") {
+        this.keyword = "医院";
       }
     },
     infohtmlset(e) {
